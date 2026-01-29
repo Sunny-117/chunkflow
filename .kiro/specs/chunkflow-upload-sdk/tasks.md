@@ -356,30 +356,30 @@
     - **验证需求**: 18.2, 18.4, 18.5, 19.1, 19.2, 19.4, 19.5
 
 - [~] 16. 服务端应用 - Nest.js 实现
-  - [~] 16.1 创建 Nest.js 项目
+  - [x] 16.1 创建 Nest.js 项目
     - 创建 `apps/server` 目录
     - 初始化 Nest.js + Fastify 项目
     - 配置 PostgreSQL 连接
     - _需求: 13.1_
-  - [~] 16.2 创建数据库模型
+  - [x] 16.2 创建数据库模型
     - 创建 files 表
     - 创建 chunks 表
     - 创建 file_chunks 关联表
     - 创建索引
     - _需求: 13.2, 13.3_
-  - [~] 16.3 实现 UploadController
+  - [x] 16.3 实现 UploadController
     - 实现 POST /upload/create 接口
     - 实现 POST /upload/verify 接口
     - 实现 POST /upload/chunk 接口（支持 multipart）
     - 实现 POST /upload/merge 接口
     - 实现 GET /files/:fileId 接口（支持 Range）
     - _需求: 12.1, 12.2, 12.3, 12.4, 19.4_
-  - [~] 16.4 实现错误处理中间件
+  - [x] 16.4 实现错误处理中间件
     - 实现 Token 验证中间件
     - 实现全局异常过滤器
     - 实现错误响应格式化
     - _需求: 20.4_
-  - [~] 16.5 配置 docker-compose
+  - [x] 16.5 配置 docker-compose
     - 创建 docker-compose.yml
     - 配置 PostgreSQL 服务
     - 配置 Nest.js 应用服务
@@ -397,20 +397,20 @@
   - 如有问题请向用户询问
 
 - [~] 18. Playground 应用
-  - [~] 18.1 创建 React Playground
+  - [x] 18.1 创建 React Playground
     - 创建 `apps/playground` 目录
     - 使用 Vite 初始化 React 项目
     - 集成 @chunkflow/upload-client-react
     - 集成 @chunkflow/upload-component-react
     - _需求: 16.4_
-  - [~] 18.2 实现演示页面
+  - [x] 18.2 实现演示页面
     - 实现文件上传演示
     - 实现断点续传演示
     - 实现秒传演示
     - 实现多文件上传演示
     - 显示上传统计信息
     - _需求: 16.4_
-  - [~] 18.3 实现请求适配器
+  - [x] 18.3 实现请求适配器
     - 实现基于 fetch 的 RequestAdapter
     - 连接到本地服务端
     - _需求: 8.3_
@@ -442,7 +442,7 @@
     - 安装和配置 @changesets/cli
     - 创建初始 changeset
     - _需求: 15.6_
-  - [~] 20.2 编写 README 文件
+  - [x] 20.2 编写 README 文件
     - 为每个包编写 README
     - 包含安装、使用、API 文档链接
     - _需求: 16.2_

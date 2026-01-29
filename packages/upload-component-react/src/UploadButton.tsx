@@ -177,13 +177,23 @@ export function UploadButton({
  * Check if a file matches the accept pattern
  *
  * @param file - The file to check
- * @param accept - The accept pattern (e.g., "image/*", ".pdf,.doc")
+ * @param accept - The accept pattern (e.g., "image/star", ".pdf,.doc", "star/star")
  * @returns true if the file matches the pattern
  */
 function matchAccept(file: File, accept: string): boolean {
+  // Accept all files if pattern is "*/*" or "*"
+  if (accept === "*/*" || accept === "*") {
+    return true;
+  }
+
   const patterns = accept.split(",").map((p) => p.trim());
 
   for (const pattern of patterns) {
+    // Accept all files
+    if (pattern === "*/*" || pattern === "*") {
+      return true;
+    }
+
     // Exact MIME type match (e.g., "image/jpeg")
     if (pattern === file.type) {
       return true;
