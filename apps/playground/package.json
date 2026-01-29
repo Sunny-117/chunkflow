@@ -1,9 +1,9 @@
 {
   "name": "@chunkflow/playground",
   "version": "0.0.0",
+  "private": true,
   "description": "Playground application for ChunkFlow Upload SDK",
   "type": "module",
-  "private": true,
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

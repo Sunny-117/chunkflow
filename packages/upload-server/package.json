@@ -2,6 +2,18 @@
   "name": "@chunkflow/upload-server",
   "version": "0.0.0",
   "description": "Server-side SDK for ChunkFlow Upload",
+  "keywords": [
+    "bff",
+    "server",
+    "storage",
+    "typescript",
+    "upload"
+  ],
+  "license": "MIT",
+  "author": "",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -12,9 +24,6 @@
       "import": "./dist/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsdown src/index.ts --format esm && tsc --emitDeclarationOnly --declaration --outDir dist",
     "dev": "tsdown src/index.ts --format esm --dts --watch",
@@ -23,15 +32,6 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
-  "keywords": [
-    "upload",
-    "server",
-    "bff",
-    "storage",
-    "typescript"
-  ],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
     "@chunkflow/protocol": "workspace:*",
     "jsonwebtoken": "^9.0.3",

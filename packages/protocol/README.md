@@ -38,8 +38,8 @@ import type {
   UploadChunkResponse,
   MergeFileRequest,
   MergeFileResponse,
-  RequestAdapter
-} from '@chunkflow/protocol';
+  RequestAdapter,
+} from "@chunkflow/protocol";
 ```
 
 ### Core Types
@@ -50,11 +50,11 @@ Represents file metadata:
 
 ```typescript
 const fileInfo: FileInfo = {
-  name: 'document.pdf',
+  name: "document.pdf",
   size: 5242880, // 5MB in bytes
-  type: 'application/pdf',
-  hash: 'abc123...', // Optional, calculated later
-  lastModified: Date.now()
+  type: "application/pdf",
+  hash: "abc123...", // Optional, calculated later
+  lastModified: Date.now(),
 };
 ```
 
@@ -65,10 +65,10 @@ Represents a file chunk:
 ```typescript
 const chunkInfo: ChunkInfo = {
   index: 0,
-  hash: 'chunk-hash-md5',
+  hash: "chunk-hash-md5",
   size: 1048576, // 1MB
   start: 0,
-  end: 1048576
+  end: 1048576,
 };
 ```
 
@@ -78,10 +78,10 @@ Authentication token for upload session:
 
 ```typescript
 const uploadToken: UploadToken = {
-  token: 'jwt-token-string',
-  fileId: 'unique-file-id',
+  token: "jwt-token-string",
+  fileId: "unique-file-id",
   chunkSize: 1048576,
-  expiresAt: Date.now() + 86400000 // 24 hours
+  expiresAt: Date.now() + 86400000, // 24 hours
 };
 ```
 
@@ -91,13 +91,13 @@ Upload state enumeration:
 
 ```typescript
 enum UploadStatus {
-  IDLE = 'idle',
-  HASHING = 'hashing',
-  UPLOADING = 'uploading',
-  PAUSED = 'paused',
-  SUCCESS = 'success',
-  ERROR = 'error',
-  CANCELLED = 'cancelled'
+  IDLE = "idle",
+  HASHING = "hashing",
+  UPLOADING = "uploading",
+  PAUSED = "paused",
+  SUCCESS = "success",
+  ERROR = "error",
+  CANCELLED = "cancelled",
 }
 ```
 
@@ -109,15 +109,17 @@ Initiate upload session:
 
 ```typescript
 const request: CreateFileRequest = {
-  fileName: 'document.pdf',
+  fileName: "document.pdf",
   fileSize: 5242880,
-  fileType: 'application/pdf',
-  preferredChunkSize: 1048576 // Optional
+  fileType: "application/pdf",
+  preferredChunkSize: 1048576, // Optional
 };
 
 const response: CreateFileResponse = {
-  uploadToken: { /* ... */ },
-  negotiatedChunkSize: 1048576
+  uploadToken: {
+    /* ... */
+  },
+  negotiatedChunkSize: 1048576,
 };
 ```
 
@@ -127,16 +129,16 @@ Check for instant upload or resume:
 
 ```typescript
 const request: VerifyHashRequest = {
-  fileHash: 'complete-file-hash',
-  chunkHashes: ['chunk1-hash', 'chunk2-hash'],
-  uploadToken: 'session-token'
+  fileHash: "complete-file-hash",
+  chunkHashes: ["chunk1-hash", "chunk2-hash"],
+  uploadToken: "session-token",
 };
 
 const response: VerifyHashResponse = {
   fileExists: false,
   fileUrl: undefined,
   existingChunks: [0, 2],
-  missingChunks: [1, 3, 4]
+  missingChunks: [1, 3, 4],
 };
 ```
 
@@ -146,15 +148,15 @@ Upload a single chunk:
 
 ```typescript
 const request: UploadChunkRequest = {
-  uploadToken: 'session-token',
+  uploadToken: "session-token",
   chunkIndex: 0,
-  chunkHash: 'chunk-hash-md5',
-  chunk: blob // Blob in browser, Buffer in Node.js
+  chunkHash: "chunk-hash-md5",
+  chunk: blob, // Blob in browser, Buffer in Node.js
 };
 
 const response: UploadChunkResponse = {
   success: true,
-  chunkHash: 'chunk-hash-md5'
+  chunkHash: "chunk-hash-md5",
 };
 ```
 
@@ -164,15 +166,15 @@ Complete upload (logical merge):
 
 ```typescript
 const request: MergeFileRequest = {
-  uploadToken: 'session-token',
-  fileHash: 'complete-file-hash',
-  chunkHashes: ['chunk1', 'chunk2', 'chunk3']
+  uploadToken: "session-token",
+  fileHash: "complete-file-hash",
+  chunkHashes: ["chunk1", "chunk2", "chunk3"],
 };
 
 const response: MergeFileResponse = {
   success: true,
-  fileUrl: 'https://cdn.example.com/files/abc123',
-  fileId: 'unique-file-id'
+  fileUrl: "https://cdn.example.com/files/abc123",
+  fileId: "unique-file-id",
 };
 ```
 

@@ -85,7 +85,7 @@ pnpm add @chunkflow/core @chunkflow/upload-client-vue
 ### React Usage
 
 ```tsx
-import { UploadProvider, useUpload } from '@chunkflow/upload-client-react';
+import { UploadProvider, useUpload } from "@chunkflow/upload-client-react";
 
 function App() {
   return (
@@ -97,8 +97,8 @@ function App() {
 
 function UploadComponent() {
   const { upload, status, progress } = useUpload({
-    onSuccess: (fileUrl) => console.log('Upload complete:', fileUrl),
-    onError: (error) => console.error('Upload failed:', error),
+    onSuccess: (fileUrl) => console.log("Upload complete:", fileUrl),
+    onError: (error) => console.error("Upload failed:", error),
   });
 
   return (
@@ -121,11 +121,11 @@ function UploadComponent() {
 
 ```vue
 <script setup>
-import { useUpload } from '@chunkflow/upload-client-vue';
+import { useUpload } from "@chunkflow/upload-client-vue";
 
 const { upload, status, progress } = useUpload({
-  onSuccess: (fileUrl) => console.log('Upload complete:', fileUrl),
-  onError: (error) => console.error('Upload failed:', error),
+  onSuccess: (fileUrl) => console.log("Upload complete:", fileUrl),
+  onError: (error) => console.error("Upload failed:", error),
 });
 
 const handleFileChange = (event) => {

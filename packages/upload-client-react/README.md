@@ -11,7 +11,7 @@ pnpm add @chunkflow/upload-client-react
 ## Usage
 
 ```tsx
-import { UploadProvider, useUpload } from '@chunkflow/upload-client-react';
+import { UploadProvider, useUpload } from "@chunkflow/upload-client-react";
 
 function App() {
   return (

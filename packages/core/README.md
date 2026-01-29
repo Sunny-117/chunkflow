@@ -23,7 +23,7 @@ pnpm add @chunkflow/core
 ### Basic Upload
 
 ```typescript
-import { UploadManager } from '@chunkflow/core';
+import { UploadManager } from "@chunkflow/core";
 
 // Create manager with request adapter
 const manager = new UploadManager({
@@ -38,11 +38,11 @@ await manager.init();
 // Create and start upload task
 const task = manager.createTask(file);
 
-task.on('progress', ({ progress, speed }) => {
+task.on("progress", ({ progress, speed }) => {
   console.log(`Progress: ${progress}%, Speed: ${speed} bytes/s`);
 });
 
-task.on('success', ({ fileUrl }) => {
+task.on("success", ({ fileUrl }) => {
   console.log(`Upload complete: ${fileUrl}`);
 });
 
@@ -60,15 +60,17 @@ The plugin system allows you to extend the UploadManager with custom functionali
 Logs all upload events to the console:
 
 ```typescript
-import { UploadManager, LoggerPlugin } from '@chunkflow/core';
+import { UploadManager, LoggerPlugin } from "@chunkflow/core";
 
 const manager = new UploadManager({ requestAdapter });
 
 // Use logger plugin
-manager.use(new LoggerPlugin({
-  logProgress: true,
-  prefix: '[Upload]'
-}));
+manager.use(
+  new LoggerPlugin({
+    logProgress: true,
+    prefix: "[Upload]",
+  }),
+);
 ```
 
 ##### StatisticsPlugin
@@ -76,7 +78,7 @@ manager.use(new LoggerPlugin({
 Tracks upload statistics:
 
 ```typescript
-import { UploadManager, StatisticsPlugin } from '@chunkflow/core';
+import { UploadManager, StatisticsPlugin } from "@chunkflow/core";
 
 const manager = new UploadManager({ requestAdapter });
 const stats = new StatisticsPlugin();
@@ -98,13 +100,13 @@ console.log(stats.getSummary());
 Create your own plugin by implementing the `Plugin` interface:
 
 ```typescript
-import { Plugin, UploadTask, UploadProgress } from '@chunkflow/core';
+import { Plugin, UploadTask, UploadProgress } from "@chunkflow/core";
 
 class MyCustomPlugin implements Plugin {
-  name = 'my-custom-plugin';
+  name = "my-custom-plugin";
 
   install(manager: UploadManager): void {
-    console.log('Plugin installed');
+    console.log("Plugin installed");
   }
 
   onTaskCreated(task: UploadTask): void {
@@ -113,7 +115,7 @@ class MyCustomPlugin implements Plugin {
 
   onTaskProgress(task: UploadTask, progress: UploadProgress): void {
     // Send progress to analytics
-    analytics.track('upload_progress', {
+    analytics.track("upload_progress", {
       taskId: task.id,
       percentage: progress.percentage,
     });
@@ -121,7 +123,7 @@ class MyCustomPlugin implements Plugin {
 
   onTaskSuccess(task: UploadTask, fileUrl: string): void {
     // Send success event
-    analytics.track('upload_success', {
+    analytics.track("upload_success", {
       taskId: task.id,
       fileUrl,
     });
@@ -163,7 +165,7 @@ const unfinished = await manager.getUnfinishedTasksInfo();
 if (unfinished.length > 0) {
   // User re-selects file
   const file = await selectFile();
-  
+
   // Resume upload
   const task = await manager.resumeTask(unfinished[0].taskId, file);
   await task.start();

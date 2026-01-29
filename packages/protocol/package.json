@@ -2,6 +2,17 @@
   "name": "@chunkflow/protocol",
   "version": "0.0.0",
   "description": "Protocol layer defining communication interfaces between client and server",
+  "keywords": [
+    "protocol",
+    "types",
+    "typescript",
+    "upload"
+  ],
+  "license": "MIT",
+  "author": "",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
@@ -12,9 +23,6 @@
       "import": "./dist/index.mjs"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsdown src/index.ts --format esm && tsc --emitDeclarationOnly --declaration --outDir dist",
     "dev": "tsdown src/index.ts --format esm --watch",
@@ -23,14 +31,6 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
-  "keywords": [
-    "upload",
-    "protocol",
-    "types",
-    "typescript"
-  ],
-  "author": "",
-  "license": "MIT",
   "devDependencies": {
     "tsdown": "^0.20.1",
     "typescript": "^5.9.3",

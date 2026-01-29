@@ -1,9 +1,9 @@
 {
   "name": "@chunkflow/server-app",
   "version": "0.0.0",
+  "private": true,
   "description": "Complete server application for ChunkFlow Upload SDK",
   "type": "module",
-  "private": true,
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch src/main.ts",

@@ -89,7 +89,6 @@ ChunkFlow Upload SDK 是一个高度模块化的大文件上传解决方案，�
 └─────────────────────────────────────────────────────────────┘
 ```
 
-
 ### 包结构
 
 ```
@@ -149,13 +148,13 @@ interface UploadToken {
 
 // 上传状态
 enum UploadStatus {
-  IDLE = 'idle',
-  HASHING = 'hashing',
-  UPLOADING = 'uploading',
-  PAUSED = 'paused',
-  SUCCESS = 'success',
-  ERROR = 'error',
-  CANCELLED = 'cancelled'
+  IDLE = "idle",
+  HASHING = "hashing",
+  UPLOADING = "uploading",
+  PAUSED = "paused",
+  SUCCESS = "success",
+  ERROR = "error",
+  CANCELLED = "cancelled",
 }
 ```
 
@@ -227,7 +226,6 @@ interface RequestAdapter {
 }
 ```
 
-
 ### 2. Shared 层 (@chunkflow/shared)
 
 共享层提供通用工具函数和类型定义。
@@ -235,7 +233,7 @@ interface RequestAdapter {
 #### 事件系统
 
 ```typescript
-import mitt from 'mitt';
+import mitt from "mitt";
 
 // 上传事件类型
 interface UploadEvents {
@@ -259,7 +257,7 @@ const createEventBus = () => mitt<UploadEvents>();
 #### 并发控制
 
 ```typescript
-import pLimit from 'p-limit';
+import pLimit from "p-limit";
 
 interface ConcurrencyOptions {
   limit: number;
@@ -267,15 +265,15 @@ interface ConcurrencyOptions {
 
 class ConcurrencyController {
   private limiter: ReturnType<typeof pLimit>;
-  
+
   constructor(options: ConcurrencyOptions) {
     this.limiter = pLimit(options.limit);
   }
-  
+
   async run<T>(fn: () => Promise<T>): Promise<T> {
     return this.limiter(fn);
   }
-  
+
   updateLimit(newLimit: number): void {
     this.limiter = pLimit(newLimit);
   }
@@ -293,7 +291,7 @@ function sliceFile(file: File, start: number, end: number): Blob {
 // 计算 Hash (使用 spark-md5)
 async function calculateFileHash(
   file: File,
-  onProgress?: (progress: number) => void
+  onProgress?: (progress: number) => void,
 ): Promise<string> {
   // 使用 Web Worker 或 requestIdleCallback
   // 分块读取文件并计算 MD5
@@ -305,15 +303,15 @@ async function calculateChunkHash(chunk: Blob): Promise<string> {
 
 // 格式化文件大小
 function formatFileSize(bytes: number): string {
-  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const units = ["B", "KB", "MB", "GB", "TB"];
   let size = bytes;
   let unitIndex = 0;
-  
+
   while (size >= 1024 && unitIndex < units.length - 1) {
     size /= 1024;
     unitIndex++;
   }
-  
+
   return `${size.toFixed(2)} ${units[unitIndex]}`;
 }
 
@@ -323,10 +321,7 @@ function calculateSpeed(uploadedBytes: number, elapsedMs: number): number {
 }
 
 // 估算剩余时间
-function estimateRemainingTime(
-  remainingBytes: number,
-  speed: number
-): number {
+function estimateRemainingTime(remainingBytes: number, speed: number): number {
   return speed > 0 ? remainingBytes / speed : 0;
 }
 ```
@@ -344,36 +339,35 @@ interface UploadRecord {
 }
 
 class UploadStorage {
-  private dbName = 'chunkflow-upload';
-  private storeName = 'uploads';
+  private dbName = "chunkflow-upload";
+  private storeName = "uploads";
   private db: IDBDatabase | null = null;
-  
+
   async init(): Promise<void> {
     // 初始化 IndexedDB
   }
-  
+
   async saveRecord(record: UploadRecord): Promise<void> {
     // 保存上传记录
   }
-  
+
   async getRecord(taskId: string): Promise<UploadRecord | null> {
     // 获取上传记录
   }
-  
+
   async updateRecord(taskId: string, updates: Partial<UploadRecord>): Promise<void> {
     // 更新上传记录
   }
-  
+
   async deleteRecord(taskId: string): Promise<void> {
     // 删除上传记录
   }
-  
+
   async getAllRecords(): Promise<UploadRecord[]> {
     // 获取所有未完成的上传记录
   }
 }
 ```
-
 
 ### 3. Core 层 (@chunkflow/core)
 
@@ -415,7 +409,7 @@ class UploadTask {
   private storage: UploadStorage;
   private requestAdapter: RequestAdapter;
   private options: Required<UploadTaskOptions>;
-  
+
   constructor(options: UploadTaskOptions) {
     this.id = generateTaskId();
     this.file = options.file;
@@ -423,146 +417,143 @@ class UploadTask {
     this.eventBus = createEventBus();
     // 初始化其他属性
   }
-  
+
   // 开始上传
   async start(): Promise<void> {
     this.status = UploadStatus.HASHING;
-    
+
     // 1. 创建文件，获取 uploadToken
     const createResponse = await this.requestAdapter.createFile({
       fileName: this.file.name,
       fileSize: this.file.size,
       fileType: this.file.type,
-      preferredChunkSize: this.options.chunkSize
+      preferredChunkSize: this.options.chunkSize,
     });
-    
+
     this.uploadToken = createResponse.uploadToken;
     const chunkSize = createResponse.negotiatedChunkSize;
-    
+
     // 2. 切分文件
     this.chunks = this.createChunks(chunkSize);
-    
+
     // 3. 并行：开始上传 + 计算 Hash
-    await Promise.all([
-      this.startUpload(),
-      this.calculateAndVerifyHash()
-    ]);
+    await Promise.all([this.startUpload(), this.calculateAndVerifyHash()]);
   }
-  
+
   // 创建分片
   private createChunks(chunkSize: number): ChunkInfo[] {
     const chunks: ChunkInfo[] = [];
     const totalChunks = Math.ceil(this.file.size / chunkSize);
-    
+
     for (let i = 0; i < totalChunks; i++) {
       const start = i * chunkSize;
       const end = Math.min(start + chunkSize, this.file.size);
       chunks.push({
         index: i,
-        hash: '', // 稍后计算
+        hash: "", // 稍后计算
         size: end - start,
         start,
-        end
+        end,
       });
     }
-    
+
     return chunks;
   }
-  
+
   // 开始上传分片
   private async startUpload(): Promise<void> {
     this.status = UploadStatus.UPLOADING;
-    this.eventBus.emit('start', { taskId: this.id, file: this.file });
-    
+    this.eventBus.emit("start", { taskId: this.id, file: this.file });
+
     // 使用动态切片大小
     const chunkSizeAdjuster = new ChunkSizeAdjuster({
       initialSize: this.options.chunkSize,
       minSize: 256 * 1024, // 256KB
-      maxSize: 10 * 1024 * 1024 // 10MB
+      maxSize: 10 * 1024 * 1024, // 10MB
     });
-    
+
     // 上传分片
     for (const chunk of this.chunks) {
       if (this.status !== UploadStatus.UPLOADING) break;
-      
+
       await this.concurrencyController.run(async () => {
         await this.uploadChunkWithRetry(chunk);
       });
-      
+
       // 根据上传耗时调整下一个分片大小
       chunkSizeAdjuster.adjust(/* upload time */);
     }
   }
-  
+
   // 上传单个分片（带重试）
   private async uploadChunkWithRetry(chunk: ChunkInfo): Promise<void> {
     let retries = 0;
-    
+
     while (retries <= this.options.retryCount) {
       try {
         const blob = sliceFile(this.file, chunk.start, chunk.end);
         const chunkHash = await calculateChunkHash(blob);
         chunk.hash = chunkHash;
-        
+
         await this.requestAdapter.uploadChunk({
           uploadToken: this.uploadToken!.token,
           chunkIndex: chunk.index,
           chunkHash,
-          chunk: blob
+          chunk: blob,
         });
-        
+
         // 更新进度
         this.updateProgress(chunk);
-        
+
         // 保存到 IndexedDB
         await this.storage.updateRecord(this.id, {
-          uploadedChunks: [...this.progress.uploadedChunks, chunk.index]
+          uploadedChunks: [...this.progress.uploadedChunks, chunk.index],
         });
-        
-        this.eventBus.emit('chunkSuccess', { 
-          taskId: this.id, 
-          chunkIndex: chunk.index 
+
+        this.eventBus.emit("chunkSuccess", {
+          taskId: this.id,
+          chunkIndex: chunk.index,
         });
-        
+
         return;
       } catch (error) {
         retries++;
         if (retries > this.options.retryCount) {
-          this.eventBus.emit('chunkError', {
+          this.eventBus.emit("chunkError", {
             taskId: this.id,
             chunkIndex: chunk.index,
-            error: error as Error
+            error: error as Error,
           });
           throw error;
         }
-        
+
         // 指数退避
         await this.delay(this.options.retryDelay * Math.pow(2, retries - 1));
       }
     }
   }
-  
+
   // 计算并校验 Hash
   private async calculateAndVerifyHash(): Promise<void> {
     // 计算文件 Hash
     this.fileHash = await calculateFileHash(this.file, (progress) => {
-      this.eventBus.emit('hashProgress', { taskId: this.id, progress });
+      this.eventBus.emit("hashProgress", { taskId: this.id, progress });
     });
-    
-    this.eventBus.emit('hashComplete', { taskId: this.id, hash: this.fileHash });
-    
+
+    this.eventBus.emit("hashComplete", { taskId: this.id, hash: this.fileHash });
+
     // 校验 Hash
     const verifyResponse = await this.requestAdapter.verifyHash({
       fileHash: this.fileHash,
-      uploadToken: this.uploadToken!.token
+      uploadToken: this.uploadToken!.token,
     });
-    
+
     if (verifyResponse.fileExists) {
       // 秒传
       this.status = UploadStatus.SUCCESS;
-      this.eventBus.emit('success', { 
-        taskId: this.id, 
-        fileUrl: verifyResponse.fileUrl! 
+      this.eventBus.emit("success", {
+        taskId: this.id,
+        fileUrl: verifyResponse.fileUrl!,
       });
       // 取消正在进行的上传
       this.cancel();
@@ -571,69 +562,65 @@ class UploadTask {
       this.skipExistingChunks(verifyResponse.existingChunks);
     }
   }
-  
+
   // 更新进度
   private updateProgress(chunk: ChunkInfo): void {
     this.progress.uploadedBytes += chunk.size;
     this.progress.uploadedChunks++;
     this.progress.percentage = (this.progress.uploadedBytes / this.file.size) * 100;
-    
+
     const elapsedTime = Date.now() - this.startTime;
     this.progress.speed = calculateSpeed(this.progress.uploadedBytes, elapsedTime);
     this.progress.remainingTime = estimateRemainingTime(
       this.file.size - this.progress.uploadedBytes,
-      this.progress.speed
+      this.progress.speed,
     );
-    
-    this.eventBus.emit('progress', {
+
+    this.eventBus.emit("progress", {
       taskId: this.id,
       progress: this.progress.percentage,
-      speed: this.progress.speed
+      speed: this.progress.speed,
     });
   }
-  
+
   // 暂停
   pause(): void {
     if (this.status === UploadStatus.UPLOADING) {
       this.status = UploadStatus.PAUSED;
-      this.eventBus.emit('pause', { taskId: this.id });
+      this.eventBus.emit("pause", { taskId: this.id });
     }
   }
-  
+
   // 恢复
   async resume(): Promise<void> {
     if (this.status === UploadStatus.PAUSED) {
       this.status = UploadStatus.UPLOADING;
-      this.eventBus.emit('resume', { taskId: this.id });
+      this.eventBus.emit("resume", { taskId: this.id });
       await this.startUpload();
     }
   }
-  
+
   // 取消
   cancel(): void {
     this.status = UploadStatus.CANCELLED;
-    this.eventBus.emit('cancel', { taskId: this.id });
+    this.eventBus.emit("cancel", { taskId: this.id });
   }
-  
+
   // 事件监听
-  on<K extends keyof UploadEvents>(
-    event: K,
-    handler: (payload: UploadEvents[K]) => void
-  ): void {
+  on<K extends keyof UploadEvents>(event: K, handler: (payload: UploadEvents[K]) => void): void {
     this.eventBus.on(event, handler);
   }
-  
+
   // 获取状态
   getStatus(): UploadStatus {
     return this.status;
   }
-  
+
   getProgress(): UploadProgress {
     return { ...this.progress };
   }
 }
 ```
-
 
 #### 动态切片大小调整器
 
@@ -648,18 +635,18 @@ interface ChunkSizeAdjusterOptions {
 class ChunkSizeAdjuster {
   private currentSize: number;
   private options: Required<ChunkSizeAdjusterOptions>;
-  
+
   constructor(options: ChunkSizeAdjusterOptions) {
     this.currentSize = options.initialSize;
     this.options = {
       targetTime: 3000, // 默认 3 秒
-      ...options
+      ...options,
     };
   }
-  
+
   adjust(uploadTimeMs: number): number {
     const { targetTime, minSize, maxSize } = this.options;
-    
+
     if (uploadTimeMs < targetTime * 0.5) {
       // 上传太快，增大分片
       this.currentSize = Math.min(this.currentSize * 2, maxSize);
@@ -667,10 +654,10 @@ class ChunkSizeAdjuster {
       // 上传太慢，减小分片
       this.currentSize = Math.max(this.currentSize / 2, minSize);
     }
-    
+
     return this.currentSize;
   }
-  
+
   getCurrentSize(): number {
     return this.currentSize;
   }
@@ -693,7 +680,7 @@ class UploadManager {
   private options: Required<UploadManagerOptions>;
   private storage: UploadStorage;
   private plugins: Plugin[];
-  
+
   constructor(options: UploadManagerOptions) {
     this.tasks = new Map();
     this.options = {
@@ -701,20 +688,20 @@ class UploadManager {
       defaultChunkSize: 1024 * 1024, // 1MB
       defaultConcurrency: 3,
       autoResumeUnfinished: true,
-      ...options
+      ...options,
     };
     this.storage = new UploadStorage();
     this.plugins = [];
   }
-  
+
   async init(): Promise<void> {
     await this.storage.init();
-    
+
     if (this.options.autoResumeUnfinished) {
       await this.resumeUnfinishedTasks();
     }
   }
-  
+
   // 创建上传任务
   createTask(file: File, options?: Partial<UploadTaskOptions>): UploadTask {
     const task = new UploadTask({
@@ -725,37 +712,37 @@ class UploadManager {
       retryCount: 3,
       retryDelay: 1000,
       autoStart: false,
-      ...options
+      ...options,
     });
-    
+
     this.tasks.set(task.id, task);
-    
+
     // 应用插件
-    this.plugins.forEach(plugin => plugin.onTaskCreated?.(task));
-    
+    this.plugins.forEach((plugin) => plugin.onTaskCreated?.(task));
+
     return task;
   }
-  
+
   // 恢复未完成的任务
   private async resumeUnfinishedTasks(): Promise<void> {
     const records = await this.storage.getAllRecords();
-    
+
     for (const record of records) {
       // 创建任务并恢复状态
       // 注意：需要用户重新选择文件
     }
   }
-  
+
   // 获取任务
   getTask(taskId: string): UploadTask | undefined {
     return this.tasks.get(taskId);
   }
-  
+
   // 获取所有任务
   getAllTasks(): UploadTask[] {
     return Array.from(this.tasks.values());
   }
-  
+
   // 删除任务
   async deleteTask(taskId: string): Promise<void> {
     const task = this.tasks.get(taskId);
@@ -765,7 +752,7 @@ class UploadManager {
       await this.storage.deleteRecord(taskId);
     }
   }
-  
+
   // 注册插件
   use(plugin: Plugin): void {
     this.plugins.push(plugin);
@@ -789,16 +776,16 @@ interface Plugin {
 
 // 示例插件：日志插件
 class LoggerPlugin implements Plugin {
-  name = 'logger';
-  
+  name = "logger";
+
   onTaskCreated(task: UploadTask): void {
     console.log(`[Logger] Task created: ${task.id}`);
   }
-  
+
   onTaskStart(task: UploadTask): void {
     console.log(`[Logger] Task started: ${task.id}`);
   }
-  
+
   onTaskProgress(task: UploadTask, progress: UploadProgress): void {
     console.log(`[Logger] Task progress: ${task.id} - ${progress.percentage}%`);
   }
@@ -806,29 +793,28 @@ class LoggerPlugin implements Plugin {
 
 // 示例插件：统计插件
 class StatisticsPlugin implements Plugin {
-  name = 'statistics';
+  name = "statistics";
   private stats = {
     totalUploaded: 0,
     totalFiles: 0,
     successCount: 0,
-    errorCount: 0
+    errorCount: 0,
   };
-  
+
   onTaskSuccess(task: UploadTask): void {
     this.stats.successCount++;
     this.stats.totalUploaded += task.file.size;
   }
-  
+
   onTaskError(task: UploadTask): void {
     this.stats.errorCount++;
   }
-  
+
   getStats() {
     return { ...this.stats };
   }
 }
 ```
-
 
 ### 4. Client 层 - React 适配 (@chunkflow/upload-client-react)
 
@@ -864,39 +850,42 @@ function useUpload(options: UseUploadOptions = {}): UseUploadReturn {
     speed: 0,
     remainingTime: 0,
     uploadedChunks: 0,
-    totalChunks: 0
+    totalChunks: 0,
   });
   const [error, setError] = useState<Error | null>(null);
-  
-  const upload = useCallback((file: File) => {
-    const newTask = manager.createTask(file, options);
-    
-    newTask.on('start', () => setStatus(UploadStatus.UPLOADING));
-    newTask.on('progress', ({ progress: p, speed }) => {
-      setProgress(prev => ({ ...prev, percentage: p, speed }));
-      options.onProgress?.(newTask.getProgress());
-    });
-    newTask.on('success', ({ fileUrl }) => {
-      setStatus(UploadStatus.SUCCESS);
-      options.onSuccess?.(fileUrl);
-    });
-    newTask.on('error', ({ error: err }) => {
-      setStatus(UploadStatus.ERROR);
-      setError(err);
-      options.onError?.(err);
-    });
-    newTask.on('pause', () => setStatus(UploadStatus.PAUSED));
-    newTask.on('resume', () => setStatus(UploadStatus.UPLOADING));
-    newTask.on('cancel', () => setStatus(UploadStatus.CANCELLED));
-    
-    setTask(newTask);
-    newTask.start();
-  }, [manager, options]);
-  
+
+  const upload = useCallback(
+    (file: File) => {
+      const newTask = manager.createTask(file, options);
+
+      newTask.on("start", () => setStatus(UploadStatus.UPLOADING));
+      newTask.on("progress", ({ progress: p, speed }) => {
+        setProgress((prev) => ({ ...prev, percentage: p, speed }));
+        options.onProgress?.(newTask.getProgress());
+      });
+      newTask.on("success", ({ fileUrl }) => {
+        setStatus(UploadStatus.SUCCESS);
+        options.onSuccess?.(fileUrl);
+      });
+      newTask.on("error", ({ error: err }) => {
+        setStatus(UploadStatus.ERROR);
+        setError(err);
+        options.onError?.(err);
+      });
+      newTask.on("pause", () => setStatus(UploadStatus.PAUSED));
+      newTask.on("resume", () => setStatus(UploadStatus.UPLOADING));
+      newTask.on("cancel", () => setStatus(UploadStatus.CANCELLED));
+
+      setTask(newTask);
+      newTask.start();
+    },
+    [manager, options],
+  );
+
   const pause = useCallback(() => task?.pause(), [task]);
   const resume = useCallback(() => task?.resume(), [task]);
   const cancel = useCallback(() => task?.cancel(), [task]);
-  
+
   return { upload, pause, resume, cancel, status, progress, error };
 }
 ```
@@ -916,38 +905,44 @@ interface UseUploadListReturn {
 function useUploadList(): UseUploadListReturn {
   const manager = useUploadManager();
   const [tasks, setTasks] = useState<UploadTask[]>([]);
-  
+
   useEffect(() => {
     const updateTasks = () => setTasks(manager.getAllTasks());
-    
+
     // 定期更新任务列表
     const interval = setInterval(updateTasks, 100);
     return () => clearInterval(interval);
   }, [manager]);
-  
-  const uploadFiles = useCallback((files: File[]) => {
-    files.forEach(file => {
-      const task = manager.createTask(file);
-      task.start();
-    });
-  }, [manager]);
-  
+
+  const uploadFiles = useCallback(
+    (files: File[]) => {
+      files.forEach((file) => {
+        const task = manager.createTask(file);
+        task.start();
+      });
+    },
+    [manager],
+  );
+
   const pauseAll = useCallback(() => {
-    tasks.forEach(task => task.pause());
+    tasks.forEach((task) => task.pause());
   }, [tasks]);
-  
+
   const resumeAll = useCallback(() => {
-    tasks.forEach(task => task.resume());
+    tasks.forEach((task) => task.resume());
   }, [tasks]);
-  
+
   const cancelAll = useCallback(() => {
-    tasks.forEach(task => task.cancel());
+    tasks.forEach((task) => task.cancel());
   }, [tasks]);
-  
-  const removeTask = useCallback((taskId: string) => {
-    manager.deleteTask(taskId);
-  }, [manager]);
-  
+
+  const removeTask = useCallback(
+    (taskId: string) => {
+      manager.deleteTask(taskId);
+    },
+    [manager],
+  );
+
   return { tasks, uploadFiles, pauseAll, resumeAll, cancelAll, removeTask };
 }
 ```
@@ -969,18 +964,18 @@ interface UploadProviderProps {
 
 function UploadProvider({ children, requestAdapter, options }: UploadProviderProps) {
   const managerRef = useRef<UploadManager>();
-  
+
   if (!managerRef.current) {
     managerRef.current = new UploadManager({
       requestAdapter,
       ...options
     });
   }
-  
+
   useEffect(() => {
     managerRef.current?.init();
   }, []);
-  
+
   return (
     <UploadContext.Provider value={{ manager: managerRef.current }}>
       {children}
@@ -1005,11 +1000,11 @@ Vue 适配层提供 Composables。
 
 ```typescript
 function useUpload(options: UseUploadOptions = {}) {
-  const manager = inject<UploadManager>('uploadManager');
+  const manager = inject<UploadManager>("uploadManager");
   if (!manager) {
-    throw new Error('useUpload must be used within UploadProvider');
+    throw new Error("useUpload must be used within UploadProvider");
   }
-  
+
   const task = ref<UploadTask | null>(null);
   const status = ref<UploadStatus>(UploadStatus.IDLE);
   const progress = ref<UploadProgress>({
@@ -1019,40 +1014,41 @@ function useUpload(options: UseUploadOptions = {}) {
     speed: 0,
     remainingTime: 0,
     uploadedChunks: 0,
-    totalChunks: 0
+    totalChunks: 0,
   });
   const error = ref<Error | null>(null);
-  
+
   const upload = (file: File) => {
     const newTask = manager.createTask(file, options);
-    
-    newTask.on('start', () => { status.value = UploadStatus.UPLOADING; });
-    newTask.on('progress', ({ progress: p, speed }) => {
+
+    newTask.on("start", () => {
+      status.value = UploadStatus.UPLOADING;
+    });
+    newTask.on("progress", ({ progress: p, speed }) => {
       progress.value = { ...progress.value, percentage: p, speed };
       options.onProgress?.(newTask.getProgress());
     });
-    newTask.on('success', ({ fileUrl }) => {
+    newTask.on("success", ({ fileUrl }) => {
       status.value = UploadStatus.SUCCESS;
       options.onSuccess?.(fileUrl);
     });
-    newTask.on('error', ({ error: err }) => {
+    newTask.on("error", ({ error: err }) => {
       status.value = UploadStatus.ERROR;
       error.value = err;
       options.onError?.(err);
     });
-    
+
     task.value = newTask;
     newTask.start();
   };
-  
+
   const pause = () => task.value?.pause();
   const resume = () => task.value?.resume();
   const cancel = () => task.value?.cancel();
-  
+
   return { upload, pause, resume, cancel, status, progress, error };
 }
 ```
-
 
 ### 6. Component 层 - React 组件 (@chunkflow/upload-component-react)
 
@@ -1079,14 +1075,14 @@ function UploadButton({
   className
 }: UploadButtonProps) {
   const inputRef = useRef<HTMLInputElement>(null);
-  
+
   const handleClick = () => {
     inputRef.current?.click();
   };
-  
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    
+
     // 文件大小验证
     if (maxSize) {
       const validFiles = files.filter(file => file.size <= maxSize);
@@ -1097,13 +1093,13 @@ function UploadButton({
     } else {
       onSelect?.(files);
     }
-    
+
     // 重置 input
     if (inputRef.current) {
       inputRef.current.value = '';
     }
   };
-  
+
   return (
     <>
       <button onClick={handleClick} className={className}>
@@ -1139,24 +1135,24 @@ function UploadProgress({
   className
 }: UploadProgressProps) {
   const [progress, setProgress] = useState(task.getProgress());
-  
+
   useEffect(() => {
     const handleProgress = () => {
       setProgress(task.getProgress());
     };
-    
+
     task.on('progress', handleProgress);
-    
+
     return () => {
       task.off('progress', handleProgress);
     };
   }, [task]);
-  
+
   return (
     <div className={className}>
       <div className="progress-bar">
-        <div 
-          className="progress-fill" 
+        <div
+          className="progress-fill"
           style={{ width: `${progress.percentage}%` }}
         />
       </div>
@@ -1184,7 +1180,7 @@ interface UploadListProps {
 
 function UploadList({ className, renderItem }: UploadListProps) {
   const { tasks, removeTask } = useUploadList();
-  
+
   return (
     <div className={className}>
       {tasks.map(task => (
@@ -1200,25 +1196,25 @@ function UploadList({ className, renderItem }: UploadListProps) {
   );
 }
 
-function DefaultUploadItem({ 
-  task, 
-  onRemove 
-}: { 
-  task: UploadTask; 
+function DefaultUploadItem({
+  task,
+  onRemove
+}: {
+  task: UploadTask;
   onRemove: () => void;
 }) {
   const status = task.getStatus();
   const progress = task.getProgress();
-  
+
   return (
     <div className="default-upload-item">
       <div className="file-info">
         <span className="file-name">{task.file.name}</span>
         <span className="file-size">{formatFileSize(task.file.size)}</span>
       </div>
-      
+
       <UploadProgress task={task} />
-      
+
       <div className="actions">
         {status === UploadStatus.UPLOADING && (
           <button onClick={() => task.pause()}>Pause</button>
@@ -1252,32 +1248,32 @@ function UploadDropzone({
   className
 }: UploadDropzoneProps) {
   const [isDragging, setIsDragging] = useState(false);
-  
+
   const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
     setIsDragging(true);
   };
-  
+
   const handleDragLeave = () => {
     setIsDragging(false);
   };
-  
+
   const handleDrop = (e: DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    
+
     const files = Array.from(e.dataTransfer?.files || []);
-    
+
     // 文件类型和大小验证
     const validFiles = files.filter(file => {
       if (accept && !matchAccept(file, accept)) return false;
       if (maxSize && file.size > maxSize) return false;
       return true;
     });
-    
+
     onDrop?.(validFiles);
   };
-  
+
   return (
     <div
       className={`${className} ${isDragging ? 'dragging' : ''}`}
@@ -1295,7 +1291,6 @@ function UploadDropzone({
 }
 ```
 
-
 ### 7. Server 层 - BFF SDK (@chunkflow/upload-server)
 
 服务端 SDK 提供上传逻辑的实现和存储适配器。
@@ -1306,16 +1301,16 @@ function UploadDropzone({
 interface StorageAdapter {
   // 保存分片
   saveChunk(chunkHash: string, data: Buffer): Promise<void>;
-  
+
   // 获取分片
   getChunk(chunkHash: string): Promise<Buffer>;
-  
+
   // 检查分片是否存在
   chunkExists(chunkHash: string): Promise<boolean>;
-  
+
   // 批量检查分片
   chunksExist(chunkHashes: string[]): Promise<boolean[]>;
-  
+
   // 流式读取分片
   getChunkStream(chunkHash: string): Promise<ReadableStream>;
 }
@@ -1323,22 +1318,22 @@ interface StorageAdapter {
 // 本地文件系统适配器
 class LocalStorageAdapter implements StorageAdapter {
   private basePath: string;
-  
+
   constructor(basePath: string) {
     this.basePath = basePath;
   }
-  
+
   async saveChunk(chunkHash: string, data: Buffer): Promise<void> {
     const chunkPath = this.getChunkPath(chunkHash);
     await fs.promises.mkdir(path.dirname(chunkPath), { recursive: true });
     await fs.promises.writeFile(chunkPath, data);
   }
-  
+
   async getChunk(chunkHash: string): Promise<Buffer> {
     const chunkPath = this.getChunkPath(chunkHash);
     return fs.promises.readFile(chunkPath);
   }
-  
+
   async chunkExists(chunkHash: string): Promise<boolean> {
     const chunkPath = this.getChunkPath(chunkHash);
     try {
@@ -1348,16 +1343,16 @@ class LocalStorageAdapter implements StorageAdapter {
       return false;
     }
   }
-  
+
   async chunksExist(chunkHashes: string[]): Promise<boolean[]> {
-    return Promise.all(chunkHashes.map(hash => this.chunkExists(hash)));
+    return Promise.all(chunkHashes.map((hash) => this.chunkExists(hash)));
   }
-  
+
   async getChunkStream(chunkHash: string): Promise<ReadableStream> {
     const chunkPath = this.getChunkPath(chunkHash);
     return fs.createReadStream(chunkPath);
   }
-  
+
   private getChunkPath(chunkHash: string): string {
     // 使用 hash 的前两位作为子目录，避免单目录文件过多
     const subDir = chunkHash.substring(0, 2);
@@ -1369,21 +1364,21 @@ class LocalStorageAdapter implements StorageAdapter {
 class OSSStorageAdapter implements StorageAdapter {
   private client: OSSClient;
   private bucket: string;
-  
+
   constructor(config: OSSConfig) {
     this.client = new OSSClient(config);
     this.bucket = config.bucket;
   }
-  
+
   async saveChunk(chunkHash: string, data: Buffer): Promise<void> {
     await this.client.put(`chunks/${chunkHash}`, data);
   }
-  
+
   async getChunk(chunkHash: string): Promise<Buffer> {
     const result = await this.client.get(`chunks/${chunkHash}`);
     return result.content;
   }
-  
+
   async chunkExists(chunkHash: string): Promise<boolean> {
     try {
       await this.client.head(`chunks/${chunkHash}`);
@@ -1392,7 +1387,7 @@ class OSSStorageAdapter implements StorageAdapter {
       return false;
     }
   }
-  
+
   // ... 其他方法实现
 }
 ```
@@ -1424,50 +1419,50 @@ class UploadService {
   private db: DatabaseAdapter;
   private tokenSecret: string;
   private defaultChunkSize: number;
-  
+
   constructor(options: UploadServiceOptions) {
     this.storage = options.storageAdapter;
     this.db = options.database;
     this.tokenSecret = options.tokenSecret;
     this.defaultChunkSize = options.defaultChunkSize || 1024 * 1024;
   }
-  
+
   // 创建文件
   async createFile(request: CreateFileRequest): Promise<CreateFileResponse> {
     const fileId = generateFileId();
     const uploadToken = this.generateToken(fileId);
-    
+
     // 协商分片大小
     const negotiatedChunkSize = request.preferredChunkSize || this.defaultChunkSize;
-    
+
     // 保存文件元数据
     await this.db.saveFileMetadata({
       fileId,
       fileName: request.fileName,
       fileSize: request.fileSize,
       fileType: request.fileType,
-      fileHash: '',
+      fileHash: "",
       chunkHashes: [],
       uploadToken,
-      createdAt: new Date()
+      createdAt: new Date(),
     });
-    
+
     return {
       uploadToken: {
         token: uploadToken,
         fileId,
         chunkSize: negotiatedChunkSize,
-        expiresAt: Date.now() + 24 * 60 * 60 * 1000 // 24 小时
+        expiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 小时
       },
-      negotiatedChunkSize
+      negotiatedChunkSize,
     };
   }
-  
+
   // Hash 校验
   async verifyHash(request: VerifyHashRequest): Promise<VerifyHashResponse> {
     // 验证 token
     const fileId = this.verifyToken(request.uploadToken);
-    
+
     // 检查文件是否已存在
     if (request.fileHash) {
       const existingFile = await this.db.findFileByHash(request.fileHash);
@@ -1476,17 +1471,17 @@ class UploadService {
           fileExists: true,
           fileUrl: this.generateFileUrl(existingFile.fileId),
           existingChunks: [],
-          missingChunks: []
+          missingChunks: [],
         };
       }
     }
-    
+
     // 检查分片是否存在
     if (request.chunkHashes) {
       const existsResults = await this.storage.chunksExist(request.chunkHashes);
       const existingChunks: number[] = [];
       const missingChunks: number[] = [];
-      
+
       existsResults.forEach((exists, index) => {
         if (exists) {
           existingChunks.push(index);
@@ -1494,99 +1489,99 @@ class UploadService {
           missingChunks.push(index);
         }
       });
-      
+
       return {
         fileExists: false,
         existingChunks,
-        missingChunks
+        missingChunks,
       };
     }
-    
+
     return {
       fileExists: false,
       existingChunks: [],
-      missingChunks: []
+      missingChunks: [],
     };
   }
-  
+
   // 上传分片
   async uploadChunk(request: UploadChunkRequest): Promise<UploadChunkResponse> {
     // 验证 token
     const fileId = this.verifyToken(request.uploadToken);
-    
+
     // 验证分片 Hash
     const calculatedHash = calculateHash(request.chunk);
     if (calculatedHash !== request.chunkHash) {
-      throw new Error('Chunk hash mismatch');
+      throw new Error("Chunk hash mismatch");
     }
-    
+
     // 保存分片（如果不存在）
     const exists = await this.storage.chunkExists(request.chunkHash);
     if (!exists) {
       await this.storage.saveChunk(request.chunkHash, request.chunk);
     }
-    
+
     // 更新文件元数据
     await this.db.addChunkToFile(fileId, request.chunkIndex, request.chunkHash);
-    
+
     return {
       success: true,
-      chunkHash: request.chunkHash
+      chunkHash: request.chunkHash,
     };
   }
-  
+
   // 逻辑合并
   async mergeFile(request: MergeFileRequest): Promise<MergeFileResponse> {
     // 验证 token
     const fileId = this.verifyToken(request.uploadToken);
-    
+
     // 验证所有分片都已上传
     const existsResults = await this.storage.chunksExist(request.chunkHashes);
-    if (existsResults.some(exists => !exists)) {
-      throw new Error('Some chunks are missing');
+    if (existsResults.some((exists) => !exists)) {
+      throw new Error("Some chunks are missing");
     }
-    
+
     // 更新文件元数据
     await this.db.updateFileMetadata(fileId, {
       fileHash: request.fileHash,
       chunkHashes: request.chunkHashes,
-      completedAt: new Date()
+      completedAt: new Date(),
     });
-    
+
     const fileUrl = this.generateFileUrl(fileId);
-    
+
     return {
       success: true,
       fileUrl,
-      fileId
+      fileId,
     };
   }
-  
+
   // 获取文件流
   async getFileStream(fileId: string): Promise<ReadableStream> {
     const metadata = await this.db.getFileMetadata(fileId);
     if (!metadata) {
-      throw new Error('File not found');
+      throw new Error("File not found");
     }
-    
+
     // 创建流式管道
     return this.createMergedStream(metadata.chunkHashes);
   }
-  
+
   // 创建合并流
   private async createMergedStream(chunkHashes: string[]): Promise<ReadableStream> {
     let currentIndex = 0;
-    
+
     return new ReadableStream({
       async pull(controller) {
         if (currentIndex >= chunkHashes.length) {
           controller.close();
           return;
         }
-        
+
         const chunkHash = chunkHashes[currentIndex];
         const chunkStream = await this.storage.getChunkStream(chunkHash);
-        
+
         // 读取分片并推送到流
         const reader = chunkStream.getReader();
         while (true) {
@@ -1594,32 +1589,31 @@ class UploadService {
           if (done) break;
           controller.enqueue(value);
         }
-        
+
         currentIndex++;
-      }
+      },
     });
   }
-  
+
   private generateToken(fileId: string): string {
     // 使用 JWT 或其他方式生成 token
-    return jwt.sign({ fileId }, this.tokenSecret, { expiresIn: '24h' });
+    return jwt.sign({ fileId }, this.tokenSecret, { expiresIn: "24h" });
   }
-  
+
   private verifyToken(token: string): string {
     try {
       const payload = jwt.verify(token, this.tokenSecret);
       return payload.fileId;
     } catch {
-      throw new Error('Invalid token');
+      throw new Error("Invalid token");
     }
   }
-  
+
   private generateFileUrl(fileId: string): string {
     return `/api/files/${fileId}`;
   }
 }
 ```
-
 
 #### 数据库适配器
 
@@ -1627,16 +1621,16 @@ class UploadService {
 interface DatabaseAdapter {
   // 保存文件元数据
   saveFileMetadata(metadata: FileMetadata): Promise<void>;
-  
+
   // 获取文件元数据
   getFileMetadata(fileId: string): Promise<FileMetadata | null>;
-  
+
   // 根据 Hash 查找文件
   findFileByHash(fileHash: string): Promise<FileMetadata | null>;
-  
+
   // 更新文件元数据
   updateFileMetadata(fileId: string, updates: Partial<FileMetadata>): Promise<void>;
-  
+
   // 添加分片到文件
   addChunkToFile(fileId: string, chunkIndex: number, chunkHash: string): Promise<void>;
 }
@@ -1688,63 +1682,63 @@ CREATE TABLE file_chunks (
 #### Nest.js 控制器
 
 ```typescript
-@Controller('upload')
+@Controller("upload")
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
-  
-  @Post('create')
+
+  @Post("create")
   async createFile(@Body() request: CreateFileRequest): Promise<CreateFileResponse> {
     return this.uploadService.createFile(request);
   }
-  
-  @Post('verify')
+
+  @Post("verify")
   async verifyHash(@Body() request: VerifyHashRequest): Promise<VerifyHashResponse> {
     return this.uploadService.verifyHash(request);
   }
-  
-  @Post('chunk')
-  @UseInterceptors(FileInterceptor('chunk'))
+
+  @Post("chunk")
+  @UseInterceptors(FileInterceptor("chunk"))
   async uploadChunk(
     @UploadedFile() file: Express.Multer.File,
-    @Body() body: { uploadToken: string; chunkIndex: string; chunkHash: string }
+    @Body() body: { uploadToken: string; chunkIndex: string; chunkHash: string },
   ): Promise<UploadChunkResponse> {
     return this.uploadService.uploadChunk({
       uploadToken: body.uploadToken,
       chunkIndex: parseInt(body.chunkIndex),
       chunkHash: body.chunkHash,
-      chunk: file.buffer
+      chunk: file.buffer,
     });
   }
-  
-  @Post('merge')
+
+  @Post("merge")
   async mergeFile(@Body() request: MergeFileRequest): Promise<MergeFileResponse> {
     return this.uploadService.mergeFile(request);
   }
-  
-  @Get('files/:fileId')
+
+  @Get("files/:fileId")
   async getFile(
-    @Param('fileId') fileId: string,
+    @Param("fileId") fileId: string,
     @Res() res: FastifyReply,
-    @Headers('range') range?: string
+    @Headers("range") range?: string,
   ): Promise<void> {
     const metadata = await this.uploadService.getFileMetadata(fileId);
     if (!metadata) {
-      res.status(404).send({ error: 'File not found' });
+      res.status(404).send({ error: "File not found" });
       return;
     }
-    
+
     // 设置响应头
-    res.header('Content-Type', metadata.fileType);
-    res.header('Content-Length', metadata.fileSize.toString());
-    res.header('Accept-Ranges', 'bytes');
-    
+    res.header("Content-Type", metadata.fileType);
+    res.header("Content-Length", metadata.fileSize.toString());
+    res.header("Accept-Ranges", "bytes");
+
     // 处理 Range 请求
     if (range) {
       const [start, end] = this.parseRange(range, metadata.fileSize);
       res.status(206);
-      res.header('Content-Range', `bytes ${start}-${end}/${metadata.fileSize}`);
-      res.header('Content-Length', (end - start + 1).toString());
-      
+      res.header("Content-Range", `bytes ${start}-${end}/${metadata.fileSize}`);
+      res.header("Content-Length", (end - start + 1).toString());
+
       const stream = await this.uploadService.getFileStream(fileId, start, end);
       res.send(stream);
     } else {
@@ -1752,9 +1746,9 @@ export class UploadController {
       res.send(stream);
     }
   }
-  
+
   private parseRange(range: string, fileSize: number): [number, number] {
-    const parts = range.replace(/bytes=/, '').split('-');
+    const parts = range.replace(/bytes=/, "").split("-");
     const start = parseInt(parts[0], 10);
     const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
     return [start, end];
@@ -1828,7 +1822,6 @@ interface FileChunkEntity {
 }
 ```
 
-
 ## 正确性属性
 
 属性是一个特征或行为，应该在系统的所有有效执行中保持为真——本质上是关于系统应该做什么的形式化陈述。属性是人类可读规范和机器可验证正确性保证之间的桥梁。
@@ -1896,6 +1889,7 @@ interface FileChunkEntity {
 ### 属性 11: 状态机转换
 
 *对于任意*上传任务，状态转换应该遵循有效的状态机规则：
+
 - idle → hashing/uploading
 - hashing → uploading/error
 - uploading → paused/success/error/cancelled
@@ -1976,7 +1970,6 @@ interface FileChunkEntity {
 
 **验证需求**: 2.5, 5.2, 20.3
 
-
 ## 错误处理
 
 ### 客户端错误处理
@@ -1987,10 +1980,10 @@ interface FileChunkEntity {
 class FileValidationError extends Error {
   constructor(
     message: string,
-    public code: 'FILE_TOO_LARGE' | 'INVALID_FILE_TYPE' | 'FILE_NOT_READABLE'
+    public code: "FILE_TOO_LARGE" | "INVALID_FILE_TYPE" | "FILE_NOT_READABLE",
   ) {
     super(message);
-    this.name = 'FileValidationError';
+    this.name = "FileValidationError";
   }
 }
 
@@ -1999,15 +1992,12 @@ function validateFile(file: File, options: ValidationOptions): void {
   if (options.maxSize && file.size > options.maxSize) {
     throw new FileValidationError(
       `File size ${file.size} exceeds maximum ${options.maxSize}`,
-      'FILE_TOO_LARGE'
+      "FILE_TOO_LARGE",
     );
   }
-  
+
   if (options.accept && !matchAccept(file, options.accept)) {
-    throw new FileValidationError(
-      `File type ${file.type} is not accepted`,
-      'INVALID_FILE_TYPE'
-    );
+    throw new FileValidationError(`File type ${file.type} is not accepted`, "INVALID_FILE_TYPE");
   }
 }
 ```
@@ -2018,50 +2008,47 @@ function validateFile(file: File, options: ValidationOptions): void {
 class NetworkError extends Error {
   constructor(
     message: string,
-    public code: 'NETWORK_TIMEOUT' | 'NETWORK_OFFLINE' | 'SERVER_ERROR',
-    public statusCode?: number
+    public code: "NETWORK_TIMEOUT" | "NETWORK_OFFLINE" | "SERVER_ERROR",
+    public statusCode?: number,
   ) {
     super(message);
-    this.name = 'NetworkError';
+    this.name = "NetworkError";
   }
 }
 
 // 错误重试策略
-async function uploadWithRetry<T>(
-  fn: () => Promise<T>,
-  options: RetryOptions
-): Promise<T> {
+async function uploadWithRetry<T>(fn: () => Promise<T>, options: RetryOptions): Promise<T> {
   let lastError: Error;
-  
+
   for (let i = 0; i <= options.maxRetries; i++) {
     try {
       return await fn();
     } catch (error) {
       lastError = error as Error;
-      
+
       // 判断是否应该重试
       if (!shouldRetry(error, i, options.maxRetries)) {
         throw error;
       }
-      
+
       // 指数退避
       const delay = options.baseDelay * Math.pow(2, i);
       await sleep(delay);
     }
   }
-  
+
   throw lastError!;
 }
 
 function shouldRetry(error: Error, attempt: number, maxRetries: number): boolean {
   // 达到最大重试次数
   if (attempt >= maxRetries) return false;
-  
+
   // 网络错误可以重试
   if (error instanceof NetworkError) {
-    return error.code !== 'SERVER_ERROR' || error.statusCode! >= 500;
+    return error.code !== "SERVER_ERROR" || error.statusCode! >= 500;
   }
-  
+
   // 其他错误不重试
   return false;
 }
@@ -2073,7 +2060,7 @@ function shouldRetry(error: Error, attempt: number, maxRetries: number): boolean
 class HashCalculationError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'HashCalculationError';
+    this.name = "HashCalculationError";
   }
 }
 
@@ -2083,7 +2070,7 @@ try {
 } catch (error) {
   if (error instanceof HashCalculationError) {
     // 降级：不使用 Hash 功能，直接上传
-    console.warn('Hash calculation failed, uploading without hash check');
+    console.warn("Hash calculation failed, uploading without hash check");
     await uploadWithoutHash(file);
   }
 }
@@ -2095,10 +2082,10 @@ try {
 class StorageError extends Error {
   constructor(
     message: string,
-    public code: 'QUOTA_EXCEEDED' | 'STORAGE_UNAVAILABLE'
+    public code: "QUOTA_EXCEEDED" | "STORAGE_UNAVAILABLE",
   ) {
     super(message);
-    this.name = 'StorageError';
+    this.name = "StorageError";
   }
 }
 
@@ -2107,14 +2094,14 @@ async function saveToStorage(data: any): Promise<void> {
   try {
     await storage.save(data);
   } catch (error) {
-    if (error instanceof StorageError && error.code === 'QUOTA_EXCEEDED') {
+    if (error instanceof StorageError && error.code === "QUOTA_EXCEEDED") {
       // 清理旧数据
       await storage.cleanup();
       // 重试
       await storage.save(data);
     } else {
       // 降级：不使用持久化
-      console.warn('Storage unavailable, upload progress will not be saved');
+      console.warn("Storage unavailable, upload progress will not be saved");
     }
   }
 }
@@ -2128,10 +2115,10 @@ async function saveToStorage(data: any): Promise<void> {
 class TokenError extends Error {
   constructor(
     message: string,
-    public code: 'TOKEN_INVALID' | 'TOKEN_EXPIRED' | 'TOKEN_MISSING'
+    public code: "TOKEN_INVALID" | "TOKEN_EXPIRED" | "TOKEN_MISSING",
   ) {
     super(message);
-    this.name = 'TokenError';
+    this.name = "TokenError";
   }
 }
 
@@ -2140,11 +2127,11 @@ class TokenError extends Error {
 export class TokenValidationMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     try {
-      const token = req.headers.authorization?.replace('Bearer ', '');
+      const token = req.headers.authorization?.replace("Bearer ", "");
       if (!token) {
-        throw new TokenError('Token missing', 'TOKEN_MISSING');
+        throw new TokenError("Token missing", "TOKEN_MISSING");
       }
-      
+
       const payload = verifyToken(token);
       req.user = payload;
       next();
@@ -2152,7 +2139,7 @@ export class TokenValidationMiddleware implements NestMiddleware {
       if (error instanceof TokenError) {
         res.status(401).json({ error: error.message, code: error.code });
       } else {
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: "Internal server error" });
       }
     }
   }
@@ -2165,10 +2152,10 @@ export class TokenValidationMiddleware implements NestMiddleware {
 class ChunkValidationError extends Error {
   constructor(
     message: string,
-    public code: 'HASH_MISMATCH' | 'SIZE_MISMATCH' | 'INDEX_INVALID'
+    public code: "HASH_MISMATCH" | "SIZE_MISMATCH" | "INDEX_INVALID",
   ) {
     super(message);
-    this.name = 'ChunkValidationError';
+    this.name = "ChunkValidationError";
   }
 }
 
@@ -2178,14 +2165,14 @@ function validateChunk(chunk: Buffer, expectedHash: string, expectedSize: number
   if (actualHash !== expectedHash) {
     throw new ChunkValidationError(
       `Chunk hash mismatch: expected ${expectedHash}, got ${actualHash}`,
-      'HASH_MISMATCH'
+      "HASH_MISMATCH",
     );
   }
-  
+
   if (chunk.length !== expectedSize) {
     throw new ChunkValidationError(
       `Chunk size mismatch: expected ${expectedSize}, got ${chunk.length}`,
-      'SIZE_MISMATCH'
+      "SIZE_MISMATCH",
     );
   }
 }
@@ -2197,10 +2184,10 @@ function validateChunk(chunk: Buffer, expectedHash: string, expectedSize: number
 class StorageBackendError extends Error {
   constructor(
     message: string,
-    public code: 'DISK_FULL' | 'PERMISSION_DENIED' | 'IO_ERROR'
+    public code: "DISK_FULL" | "PERMISSION_DENIED" | "IO_ERROR",
   ) {
     super(message);
-    this.name = 'StorageBackendError';
+    this.name = "StorageBackendError";
   }
 }
 
@@ -2209,13 +2196,13 @@ async function saveChunkWithFallback(
   chunk: Buffer,
   hash: string,
   primaryStorage: StorageAdapter,
-  fallbackStorage?: StorageAdapter
+  fallbackStorage?: StorageAdapter,
 ): Promise<void> {
   try {
     await primaryStorage.saveChunk(hash, chunk);
   } catch (error) {
     if (error instanceof StorageBackendError && fallbackStorage) {
-      console.warn('Primary storage failed, using fallback');
+      console.warn("Primary storage failed, using fallback");
       await fallbackStorage.saveChunk(hash, chunk);
     } else {
       throw error;
@@ -2231,26 +2218,26 @@ async function saveChunkWithFallback(
 async function mergeFileWithTransaction(
   fileId: string,
   fileHash: string,
-  chunkHashes: string[]
+  chunkHashes: string[],
 ): Promise<void> {
   const transaction = await db.beginTransaction();
-  
+
   try {
     // 更新文件元数据
     await transaction.updateFile(fileId, { fileHash, completedAt: new Date() });
-    
+
     // 批量插入文件-分片关联
     await transaction.insertFileChunks(
       chunkHashes.map((hash, index) => ({
         fileId,
         chunkIndex: index,
-        chunkHash: hash
-      }))
+        chunkHash: hash,
+      })),
     );
-    
+
     // 更新分片引用计数
     await transaction.incrementChunkReferences(chunkHashes);
-    
+
     await transaction.commit();
   } catch (error) {
     await transaction.rollback();
@@ -2278,7 +2265,6 @@ async function mergeFileWithTransaction(
 - 文件验证失败：提示用户并阻止上传
 - 重试耗尽：提示用户手动重试或取消
 - 存储空间不足：提示用户清理空间
-
 
 ## 测试策略
 
@@ -2312,6 +2298,7 @@ async function mergeFileWithTransaction(
    - 插件系统的扩展
 
 **单元测试平衡**：
+
 - 避免编写过多的单元测试 - 基于属性的测试处理大量输入覆盖
 - 单元测试应该简洁且有针对性
 - 每个核心功能 3-5 个单元测试通常就足够了
@@ -2332,136 +2319,136 @@ async function mergeFileWithTransaction(
 #### 属性测试示例
 
 ```typescript
-import fc from 'fast-check';
-import { describe, it } from 'vitest';
+import fc from "fast-check";
+import { describe, it } from "vitest";
 
-describe('ChunkFlow Upload SDK Properties', () => {
+describe("ChunkFlow Upload SDK Properties", () => {
   // Feature: chunkflow-upload-sdk, Property 1: 文件大小决定上传策略
-  it('should use direct upload for files < 5MB and chunked upload for files >= 5MB', () => {
+  it("should use direct upload for files < 5MB and chunked upload for files >= 5MB", () => {
     fc.assert(
       fc.property(
         fc.record({
           name: fc.string(),
           size: fc.nat(100 * 1024 * 1024), // 0-100MB
-          type: fc.constantFrom('image/jpeg', 'video/mp4', 'application/pdf')
+          type: fc.constantFrom("image/jpeg", "video/mp4", "application/pdf"),
         }),
         (fileInfo) => {
           const strategy = selectUploadStrategy(fileInfo);
-          
+
           if (fileInfo.size < 5 * 1024 * 1024) {
-            expect(strategy).toBe('direct');
+            expect(strategy).toBe("direct");
           } else {
-            expect(strategy).toBe('chunked');
+            expect(strategy).toBe("chunked");
           }
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     );
   });
-  
+
   // Feature: chunkflow-upload-sdk, Property 2: 动态分片大小调整
-  it('should adjust chunk size based on upload time', () => {
+  it("should adjust chunk size based on upload time", () => {
     fc.assert(
       fc.property(
         fc.record({
           currentSize: fc.integer({ min: 256 * 1024, max: 10 * 1024 * 1024 }),
           uploadTimeMs: fc.nat(10000),
-          targetTimeMs: fc.constant(3000)
+          targetTimeMs: fc.constant(3000),
         }),
         ({ currentSize, uploadTimeMs, targetTimeMs }) => {
           const adjuster = new ChunkSizeAdjuster({
             initialSize: currentSize,
             minSize: 256 * 1024,
             maxSize: 10 * 1024 * 1024,
-            targetTime: targetTimeMs
+            targetTime: targetTimeMs,
           });
-          
+
           const newSize = adjuster.adjust(uploadTimeMs);
-          
+
           // 验证大小在范围内
           expect(newSize).toBeGreaterThanOrEqual(256 * 1024);
           expect(newSize).toBeLessThanOrEqual(10 * 1024 * 1024);
-          
+
           // 验证调整逻辑
           if (uploadTimeMs < targetTimeMs * 0.5) {
             expect(newSize).toBeGreaterThanOrEqual(currentSize);
           } else if (uploadTimeMs > targetTimeMs * 1.5) {
             expect(newSize).toBeLessThanOrEqual(currentSize);
           }
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     );
   });
-  
+
   // Feature: chunkflow-upload-sdk, Property 5: 部分秒传
-  it('should only upload missing chunks when some chunks exist', () => {
+  it("should only upload missing chunks when some chunks exist", () => {
     fc.assert(
       fc.property(
         fc.record({
           totalChunks: fc.integer({ min: 5, max: 20 }),
-          existingChunks: fc.array(fc.nat(19), { maxLength: 15 })
+          existingChunks: fc.array(fc.nat(19), { maxLength: 15 }),
         }),
         async ({ totalChunks, existingChunks }) => {
           const allChunks = Array.from({ length: totalChunks }, (_, i) => i);
-          const missingChunks = allChunks.filter(i => !existingChunks.includes(i));
-          
+          const missingChunks = allChunks.filter((i) => !existingChunks.includes(i));
+
           const uploadedChunks: number[] = [];
           const mockAdapter = {
             uploadChunk: async (req: any) => {
               uploadedChunks.push(req.chunkIndex);
               return { success: true, chunkHash: req.chunkHash };
-            }
+            },
           };
-          
+
           await uploadWithSkip(allChunks, existingChunks, mockAdapter);
-          
+
           // 验证只上传了缺失的分片
           expect(uploadedChunks.sort()).toEqual(missingChunks.sort());
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     );
   });
-  
+
   // Feature: chunkflow-upload-sdk, Property 11: 状态机转换
-  it('should follow valid state machine transitions', () => {
+  it("should follow valid state machine transitions", () => {
     fc.assert(
       fc.property(
-        fc.array(
-          fc.constantFrom(
-            'start', 'pause', 'resume', 'cancel', 'complete', 'error'
-          ),
-          { minLength: 1, maxLength: 10 }
-        ),
+        fc.array(fc.constantFrom("start", "pause", "resume", "cancel", "complete", "error"), {
+          minLength: 1,
+          maxLength: 10,
+        }),
         (actions) => {
-          const task = new UploadTask({ /* ... */ });
+          const task = new UploadTask({
+            /* ... */
+          });
           let currentState = UploadStatus.IDLE;
-          
+
           for (const action of actions) {
             const prevState = currentState;
-            
+
             try {
               switch (action) {
-                case 'start':
+                case "start":
                   if (prevState === UploadStatus.IDLE) {
                     task.start();
                     currentState = UploadStatus.UPLOADING;
                   }
                   break;
-                case 'pause':
+                case "pause":
                   if (prevState === UploadStatus.UPLOADING) {
                     task.pause();
                     currentState = UploadStatus.PAUSED;
                   }
                   break;
-                case 'resume':
+                case "resume":
                   if (prevState === UploadStatus.PAUSED) {
                     task.resume();
                     currentState = UploadStatus.UPLOADING;
                   }
                   break;
-                case 'cancel':
+                case "cancel":
                   if (prevState !== UploadStatus.CANCELLED) {
                     task.cancel();
                     currentState = UploadStatus.CANCELLED;
@@ -2471,65 +2458,63 @@ describe('ChunkFlow Upload SDK Properties', () => {
             } catch (error) {
               // 无效转换应该抛出错误或被忽略
             }
-            
+
             // 验证状态是有效的
             expect(Object.values(UploadStatus)).toContain(task.getStatus());
           }
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     );
   });
-  
+
   // Feature: chunkflow-upload-sdk, Property 14: 分片去重存储
-  it('should store only one copy of chunks with same content', () => {
+  it("should store only one copy of chunks with same content", () => {
     fc.assert(
       fc.property(
         fc.array(
           fc.record({
             fileId: fc.uuid(),
-            chunks: fc.array(fc.uint8Array({ minLength: 1024, maxLength: 1024 }))
+            chunks: fc.array(fc.uint8Array({ minLength: 1024, maxLength: 1024 })),
           }),
-          { minLength: 2, maxLength: 5 }
+          { minLength: 2, maxLength: 5 },
         ),
         async (files) => {
           const storage = new MockStorageAdapter();
           const service = new UploadService({ storageAdapter: storage });
-          
+
           // 上传所有文件的所有分片
           for (const file of files) {
             for (const chunk of file.chunks) {
               const hash = calculateHash(chunk);
               await service.uploadChunk({
-                uploadToken: 'test-token',
+                uploadToken: "test-token",
                 chunkIndex: 0,
                 chunkHash: hash,
-                chunk
+                chunk,
               });
             }
           }
-          
+
           // 计算唯一的分片 Hash
-          const allHashes = files.flatMap(f => 
-            f.chunks.map(c => calculateHash(c))
-          );
+          const allHashes = files.flatMap((f) => f.chunks.map((c) => calculateHash(c)));
           const uniqueHashes = new Set(allHashes);
-          
+
           // 验证存储的分片数量等于唯一 Hash 数量
           expect(storage.getChunkCount()).toBe(uniqueHashes.size);
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     );
   });
-  
+
   // Feature: chunkflow-upload-sdk, Property 17: 文件流式输出顺序
-  it('should output file chunks in correct order', () => {
+  it("should output file chunks in correct order", () => {
     fc.assert(
       fc.property(
         fc.array(fc.uint8Array({ minLength: 100, maxLength: 1000 }), {
           minLength: 3,
-          maxLength: 10
+          maxLength: 10,
         }),
         async (chunks) => {
           // 保存分片
@@ -2538,44 +2523,44 @@ describe('ChunkFlow Upload SDK Properties', () => {
               const hash = calculateHash(chunk);
               await storage.saveChunk(hash, chunk);
               return hash;
-            })
+            }),
           );
-          
+
           // 创建文件元数据
-          const fileId = 'test-file';
+          const fileId = "test-file";
           await db.saveFileMetadata({
             fileId,
             chunkHashes,
             /* ... */
           });
-          
+
           // 获取文件流
           const stream = await service.getFileStream(fileId);
           const outputBuffer = await streamToBuffer(stream);
-          
+
           // 验证输出与原始数据一致
           const expectedBuffer = Buffer.concat(chunks);
           expect(outputBuffer).toEqual(expectedBuffer);
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     );
   });
-  
+
   // Feature: chunkflow-upload-sdk, Property 19: 自动重试机制
-  it('should retry failed chunks with exponential backoff', () => {
+  it("should retry failed chunks with exponential backoff", () => {
     fc.assert(
       fc.property(
         fc.record({
           maxRetries: fc.integer({ min: 1, max: 5 }),
           baseDelay: fc.integer({ min: 100, max: 1000 }),
-          failuresBeforeSuccess: fc.integer({ min: 0, max: 4 })
+          failuresBeforeSuccess: fc.integer({ min: 0, max: 4 }),
         }),
         async ({ maxRetries, baseDelay, failuresBeforeSuccess }) => {
           let attemptCount = 0;
           const attemptDelays: number[] = [];
           let lastAttemptTime = Date.now();
-          
+
           const mockUpload = async () => {
             const now = Date.now();
             if (attemptCount > 0) {
@@ -2583,19 +2568,19 @@ describe('ChunkFlow Upload SDK Properties', () => {
             }
             lastAttemptTime = now;
             attemptCount++;
-            
+
             if (attemptCount <= failuresBeforeSuccess) {
-              throw new Error('Upload failed');
+              throw new Error("Upload failed");
             }
             return { success: true };
           };
-          
+
           try {
             await uploadWithRetry(mockUpload, { maxRetries, baseDelay });
-            
+
             // 验证重试次数
             expect(attemptCount).toBe(failuresBeforeSuccess + 1);
-            
+
             // 验证指数退避
             for (let i = 0; i < attemptDelays.length; i++) {
               const expectedDelay = baseDelay * Math.pow(2, i);
@@ -2608,37 +2593,37 @@ describe('ChunkFlow Upload SDK Properties', () => {
             expect(failuresBeforeSuccess).toBeGreaterThan(maxRetries);
             expect(attemptCount).toBe(maxRetries + 1);
           }
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     );
   });
-  
+
   // Feature: chunkflow-upload-sdk, Property 22: 分片 Hash 唯一性
-  it('should generate same hash for same content and different hash for different content', () => {
+  it("should generate same hash for same content and different hash for different content", () => {
     fc.assert(
       fc.property(
         fc.tuple(
           fc.uint8Array({ minLength: 1024, maxLength: 1024 }),
-          fc.uint8Array({ minLength: 1024, maxLength: 1024 })
+          fc.uint8Array({ minLength: 1024, maxLength: 1024 }),
         ),
         ([chunk1, chunk2]) => {
           const hash1 = calculateHash(chunk1);
           const hash2 = calculateHash(chunk2);
-          
+
           // 相同内容应该有相同的 Hash
           const hash1Again = calculateHash(chunk1);
           expect(hash1).toBe(hash1Again);
-          
+
           // 不同内容应该有不同的 Hash（在碰撞概率范围内）
           if (!arraysEqual(chunk1, chunk2)) {
             expect(hash1).not.toBe(hash2);
           } else {
             expect(hash1).toBe(hash2);
           }
-        }
+        },
       ),
-      { numRuns: 100 }
+      { numRuns: 100 },
     );
   });
 });
@@ -2675,4 +2660,3 @@ describe('ChunkFlow Upload SDK Properties', () => {
 - 每日运行完整的集成测试和性能测试
 - 测试失败阻止合并到主分支
 - 测试覆盖率报告自动生成并发布
-

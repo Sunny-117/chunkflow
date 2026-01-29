@@ -19,16 +19,19 @@ Thank you for your interest in contributing to ChunkFlow Upload SDK!
 ### Making Changes
 
 1. Create a new branch:
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
 2. Make your changes and ensure tests pass:
+
    ```bash
    pnpm test
    ```
 
 3. Lint and format your code:
+
    ```bash
    pnpm lint
    pnpm format

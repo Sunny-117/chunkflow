@@ -2,6 +2,17 @@
   "name": "@chunkflow/upload-client-vue",
   "version": "0.0.0",
   "description": "Vue adapter for ChunkFlow Upload SDK",
+  "keywords": [
+    "composables",
+    "typescript",
+    "upload",
+    "vue"
+  ],
+  "license": "MIT",
+  "author": "",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -12,9 +23,6 @@
       "import": "./dist/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsdown src/index.ts --format esm --dts",
     "dev": "tsdown src/index.ts --format esm --dts --watch",
@@ -23,20 +31,9 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
-  "keywords": [
-    "upload",
-    "vue",
-    "composables",
-    "typescript"
-  ],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
     "@chunkflow/core": "workspace:*",
     "@chunkflow/protocol": "workspace:*"
-  },
-  "peerDependencies": {
-    "vue": "^3.0.0"
   },
   "devDependencies": {
     "@vue/test-utils": "^2.4.6",
@@ -45,5 +42,8 @@
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
     "vue": "^3.5.27"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
   }
 }

@@ -20,9 +20,9 @@ First, install the Upload Plugin in your Vue application:
 
 ```typescript
 // main.ts
-import { createApp } from 'vue';
-import { createUploadPlugin } from '@chunkflow/upload-client-vue';
-import App from './App.vue';
+import { createApp } from "vue";
+import { createUploadPlugin } from "@chunkflow/upload-client-vue";
+import App from "./App.vue";
 
 // Create your request adapter
 const requestAdapter = {
@@ -53,7 +53,7 @@ const uploadPlugin = createUploadPlugin({
 });
 
 app.use(uploadPlugin);
-app.mount('#app');
+app.mount("#app");
 ```
 
 ### 2. Use the Composables
@@ -62,14 +62,14 @@ app.mount('#app');
 
 ```vue
 <script setup lang="ts">
-import { useUpload } from '@chunkflow/upload-client-vue';
+import { useUpload } from "@chunkflow/upload-client-vue";
 
 const { upload, pause, resume, cancel, status, progress, error } = useUpload({
   onSuccess: (fileUrl) => {
-    console.log('Upload complete:', fileUrl);
+    console.log("Upload complete:", fileUrl);
   },
   onError: (error) => {
-    console.error('Upload failed:', error);
+    console.error("Upload failed:", error);
   },
   onProgress: (progress) => {
     console.log(`Progress: ${progress.percentage}%`);
@@ -88,7 +88,7 @@ const handleFileSelect = (event: Event) => {
 <template>
   <div>
     <input type="file" @change="handleFileSelect" />
-    
+
     <div v-if="status === 'uploading'">
       <p>Progress: {{ progress.percentage.toFixed(1) }}%</p>
       <p>Speed: {{ (progress.speed / 1024 / 1024).toFixed(2) }} MB/s</p>
@@ -96,7 +96,7 @@ const handleFileSelect = (event: Event) => {
       <button @click="pause">Pause</button>
       <button @click="cancel">Cancel</button>
     </div>
-    
+
     <button v-if="status === 'paused'" @click="resume">Resume</button>
     <p v-if="status === 'success'">Upload complete!</p>
     <p v-if="status === 'error'">Error: {{ error?.message }}</p>
@@ -108,7 +108,7 @@ const handleFileSelect = (event: Event) => {
 
 ```vue
 <script setup lang="ts">
-import { useUploadList } from '@chunkflow/upload-client-vue';
+import { useUploadList } from "@chunkflow/upload-client-vue";
 
 const {
   tasks,
@@ -133,21 +133,19 @@ const stats = getStatistics();
 <template>
   <div>
     <input type="file" multiple @change="handleFilesSelect" />
-    
+
     <div>
       <button @click="pauseAll">Pause All</button>
       <button @click="resumeAll">Resume All</button>
       <button @click="cancelAll">Cancel All</button>
       <button @click="clearCompleted">Clear Completed</button>
     </div>
-    
+
     <p>
-      Total: {{ stats.total }} | 
-      Uploading: {{ stats.uploading }} | 
-      Success: {{ stats.success }} | 
+      Total: {{ stats.total }} | Uploading: {{ stats.uploading }} | Success: {{ stats.success }} |
       Error: {{ stats.error }}
     </p>
-    
+
     <ul>
       <li v-for="task in tasks" :key="task.id">
         <span>{{ task.file.name }}</span>
@@ -167,6 +165,7 @@ const stats = getStatistics();
 Creates a Vue plugin for the Upload SDK.
 
 **Options:**
+
 - `requestAdapter` (required): Implementation of the RequestAdapter interface
 - `managerOptions` (optional): Configuration for the UploadManager
   - `maxConcurrentTasks`: Maximum number of concurrent upload tasks (default: 3)
@@ -179,6 +178,7 @@ Creates a Vue plugin for the Upload SDK.
 Composable for uploading a single file.
 
 **Options:**
+
 - `chunkSize`: Chunk size in bytes
 - `concurrency`: Number of concurrent chunk uploads
 - `retryCount`: Number of retry attempts for failed chunks
@@ -192,6 +192,7 @@ Composable for uploading a single file.
 - `onCancel`: Callback when upload is cancelled
 
 **Returns:**
+
 - `upload(file)`: Function to start uploading a file
 - `pause()`: Function to pause the upload
 - `resume()`: Function to resume the upload
@@ -206,6 +207,7 @@ Composable for uploading a single file.
 Composable for managing multiple file uploads.
 
 **Returns:**
+
 - `tasks`: Reactive ref with array of all upload tasks
 - `uploadFiles(files)`: Function to upload multiple files
 - `pauseAll()`: Function to pause all uploads
@@ -220,6 +222,7 @@ Composable for managing multiple file uploads.
 Composable for accessing the UploadManager instance directly.
 
 **Returns:**
+
 - `manager`: The UploadManager instance
 
 ## License

@@ -17,9 +17,9 @@ The file utilities provide functions for file slicing, hash calculation, and for
 #### File Slicing
 
 ```typescript
-import { sliceFile } from '@chunkflow/shared';
+import { sliceFile } from "@chunkflow/shared";
 
-const file = new File(['Hello, World!'], 'test.txt', { type: 'text/plain' });
+const file = new File(["Hello, World!"], "test.txt", { type: "text/plain" });
 
 // Slice file from byte 0 to 5
 const chunk = sliceFile(file, 0, 5);
@@ -31,54 +31,54 @@ console.log(chunk.size); // 5
 Calculate MD5 hash for files and chunks using [spark-md5](https://github.com/satazor/js-spark-md5):
 
 ```typescript
-import { calculateFileHash, calculateChunkHash } from '@chunkflow/shared';
+import { calculateFileHash, calculateChunkHash } from "@chunkflow/shared";
 
 // Calculate hash for entire file with progress tracking
-const file = new File(['content'], 'test.txt', { type: 'text/plain' });
+const file = new File(["content"], "test.txt", { type: "text/plain" });
 const hash = await calculateFileHash(file, (progress) => {
   console.log(`Hash calculation: ${progress.toFixed(2)}%`);
 });
-console.log('File hash:', hash);
+console.log("File hash:", hash);
 
 // Calculate hash for a single chunk
 const chunk = file.slice(0, 1024);
 const chunkHash = await calculateChunkHash(chunk);
-console.log('Chunk hash:', chunkHash);
+console.log("Chunk hash:", chunkHash);
 ```
 
 #### File Size Formatting
 
 ```typescript
-import { formatFileSize } from '@chunkflow/shared';
+import { formatFileSize } from "@chunkflow/shared";
 
-console.log(formatFileSize(0));                    // "0 B"
-console.log(formatFileSize(1024));                 // "1.00 KB"
-console.log(formatFileSize(1536));                 // "1.50 KB"
-console.log(formatFileSize(1024 * 1024));          // "1.00 MB"
-console.log(formatFileSize(1.5 * 1024 * 1024));    // "1.50 MB"
-console.log(formatFileSize(1024 * 1024 * 1024));   // "1.00 GB"
+console.log(formatFileSize(0)); // "0 B"
+console.log(formatFileSize(1024)); // "1.00 KB"
+console.log(formatFileSize(1536)); // "1.50 KB"
+console.log(formatFileSize(1024 * 1024)); // "1.00 MB"
+console.log(formatFileSize(1.5 * 1024 * 1024)); // "1.50 MB"
+console.log(formatFileSize(1024 * 1024 * 1024)); // "1.00 GB"
 ```
 
 #### Upload Speed Calculation
 
 ```typescript
-import { calculateSpeed } from '@chunkflow/shared';
+import { calculateSpeed } from "@chunkflow/shared";
 
 const uploadedBytes = 1024 * 1024; // 1 MB
-const elapsedMs = 1000;             // 1 second
+const elapsedMs = 1000; // 1 second
 
 const speed = calculateSpeed(uploadedBytes, elapsedMs);
 console.log(speed); // 1048576 (bytes per second)
-console.log(formatFileSize(speed) + '/s'); // "1.00 MB/s"
+console.log(formatFileSize(speed) + "/s"); // "1.00 MB/s"
 ```
 
 #### Remaining Time Estimation
 
 ```typescript
-import { estimateRemainingTime, formatFileSize } from '@chunkflow/shared';
+import { estimateRemainingTime, formatFileSize } from "@chunkflow/shared";
 
 const remainingBytes = 10 * 1024 * 1024; // 10 MB
-const speed = 1024 * 1024;                // 1 MB/s
+const speed = 1024 * 1024; // 1 MB/s
 
 const remainingSeconds = estimateRemainingTime(remainingBytes, speed);
 console.log(remainingSeconds); // 10 seconds
@@ -99,7 +99,7 @@ import {
   formatFileSize,
   calculateSpeed,
   estimateRemainingTime,
-} from '@chunkflow/shared';
+} from "@chunkflow/shared";
 
 async function uploadWithProgress(file: File) {
   const chunkSize = 1024 * 1024; // 1 MB chunks
@@ -117,20 +117,20 @@ async function uploadWithProgress(file: File) {
     const start = i * chunkSize;
     const end = Math.min(start + chunkSize, file.size);
     const chunk = sliceFile(file, start, end);
-    
+
     // Calculate chunk hash
     const chunkHash = await calculateChunkHash(chunk);
-    
+
     // Upload chunk (mock)
     await uploadChunk(chunk, i, chunkHash);
-    
+
     // Update progress
     uploadedBytes += chunk.size;
     const elapsedMs = Date.now() - startTime;
     const speed = calculateSpeed(uploadedBytes, elapsedMs);
     const remainingBytes = file.size - uploadedBytes;
     const remainingTime = estimateRemainingTime(remainingBytes, speed);
-    
+
     console.log(`Progress: ${((uploadedBytes / file.size) * 100).toFixed(1)}%`);
     console.log(`Speed: ${formatFileSize(speed)}/s`);
     console.log(`Remaining: ${Math.ceil(remainingTime)}s`);
@@ -138,7 +138,7 @@ async function uploadWithProgress(file: File) {
 
   // Wait for hash calculation to complete
   const fileHash = await hashPromise;
-  console.log('File hash:', fileHash);
+  console.log("File hash:", fileHash);
 }
 ```
 
@@ -149,42 +149,42 @@ The event system provides a type-safe event bus for managing upload lifecycle ev
 #### Usage
 
 ```typescript
-import { createEventBus } from '@chunkflow/shared';
+import { createEventBus } from "@chunkflow/shared";
 
 // Create an event bus
 const eventBus = createEventBus();
 
 // Listen to events
-eventBus.on('start', ({ taskId, file }) => {
+eventBus.on("start", ({ taskId, file }) => {
   console.log(`Upload started for ${file.name}`);
 });
 
-eventBus.on('progress', ({ taskId, progress, speed }) => {
+eventBus.on("progress", ({ taskId, progress, speed }) => {
   console.log(`Upload progress: ${progress}% at ${speed} bytes/sec`);
 });
 
-eventBus.on('success', ({ taskId, fileUrl }) => {
+eventBus.on("success", ({ taskId, fileUrl }) => {
   console.log(`Upload completed: ${fileUrl}`);
 });
 
-eventBus.on('error', ({ taskId, error }) => {
+eventBus.on("error", ({ taskId, error }) => {
   console.error(`Upload failed:`, error);
 });
 
 // Emit events
-const mockFile = new File(['content'], 'test.txt', { type: 'text/plain' });
-eventBus.emit('start', { taskId: 'task-1', file: mockFile });
-eventBus.emit('progress', { taskId: 'task-1', progress: 50, speed: 1024000 });
-eventBus.emit('success', { taskId: 'task-1', fileUrl: 'https://example.com/file' });
+const mockFile = new File(["content"], "test.txt", { type: "text/plain" });
+eventBus.emit("start", { taskId: "task-1", file: mockFile });
+eventBus.emit("progress", { taskId: "task-1", progress: 50, speed: 1024000 });
+eventBus.emit("success", { taskId: "task-1", fileUrl: "https://example.com/file" });
 
 // Remove listener
-const handler = ({ taskId }) => console.log('Paused:', taskId);
-eventBus.on('pause', handler);
-eventBus.off('pause', handler);
+const handler = ({ taskId }) => console.log("Paused:", taskId);
+eventBus.on("pause", handler);
+eventBus.off("pause", handler);
 
 // Listen to all events
-eventBus.on('*', (type, payload) => {
-  console.log('Event:', type, payload);
+eventBus.on("*", (type, payload) => {
+  console.log("Event:", type, payload);
 });
 
 // Clear all listeners
@@ -198,7 +198,7 @@ The concurrency controller manages concurrent operations using [p-limit](https:/
 #### Usage
 
 ```typescript
-import { ConcurrencyController } from '@chunkflow/shared';
+import { ConcurrencyController } from "@chunkflow/shared";
 
 // Create a controller with a limit of 3 concurrent operations
 const controller = new ConcurrencyController({ limit: 3 });
@@ -207,13 +207,13 @@ const controller = new ConcurrencyController({ limit: 3 });
 const chunks = [chunk1, chunk2, chunk3, chunk4, chunk5];
 
 const results = await Promise.all(
-  chunks.map((chunk, index) => 
+  chunks.map((chunk, index) =>
     controller.run(async () => {
       // Upload the chunk
       const response = await uploadChunk(chunk, index);
       return response;
-    })
-  )
+    }),
+  ),
 );
 
 // Only 3 chunks will upload simultaneously
@@ -250,12 +250,12 @@ const promises = [
 ];
 
 // Check queue status
-console.log(controller.activeCount);  // 2 (currently running)
+console.log(controller.activeCount); // 2 (currently running)
 console.log(controller.pendingCount); // 2 (waiting in queue)
 
 await Promise.all(promises);
 
-console.log(controller.activeCount);  // 0 (all complete)
+console.log(controller.activeCount); // 0 (all complete)
 console.log(controller.pendingCount); // 0 (queue empty)
 ```
 
@@ -276,45 +276,45 @@ controller.clearQueue();
 #### Real-World Example
 
 ```typescript
-import { ConcurrencyController } from '@chunkflow/shared';
+import { ConcurrencyController } from "@chunkflow/shared";
 
 async function uploadFileInChunks(file: File, chunkSize: number) {
   // Create controller with 3 concurrent uploads
   const controller = new ConcurrencyController({ limit: 3 });
-  
+
   // Split file into chunks
   const chunks = [];
   for (let i = 0; i < file.size; i += chunkSize) {
     chunks.push(file.slice(i, i + chunkSize));
   }
-  
+
   // Upload all chunks with concurrency control
   const results = await Promise.all(
-    chunks.map((chunk, index) => 
+    chunks.map((chunk, index) =>
       controller.run(async () => {
         try {
-          const response = await fetch('/api/upload/chunk', {
-            method: 'POST',
+          const response = await fetch("/api/upload/chunk", {
+            method: "POST",
             body: chunk,
             headers: {
-              'X-Chunk-Index': index.toString(),
-              'X-Total-Chunks': chunks.length.toString(),
+              "X-Chunk-Index": index.toString(),
+              "X-Total-Chunks": chunks.length.toString(),
             },
           });
-          
+
           if (!response.ok) {
             throw new Error(`Chunk ${index} upload failed`);
           }
-          
+
           return { success: true, index };
         } catch (error) {
           console.error(`Failed to upload chunk ${index}:`, error);
           throw error;
         }
-      })
-    )
+      }),
+    ),
   );
-  
+
   console.log(`Uploaded ${results.length} chunks successfully`);
   return results;
 }

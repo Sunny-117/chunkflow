@@ -2,6 +2,17 @@
   "name": "@chunkflow/upload-client-react",
   "version": "0.0.0",
   "description": "React adapter for ChunkFlow Upload SDK",
+  "keywords": [
+    "hooks",
+    "react",
+    "typescript",
+    "upload"
+  ],
+  "license": "MIT",
+  "author": "",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
@@ -12,9 +23,6 @@
       "import": "./dist/index.mjs"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsdown src/index.ts --format esm --dts",
     "dev": "tsdown src/index.ts --format esm --dts --watch",
@@ -23,20 +31,9 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
-  "keywords": [
-    "upload",
-    "react",
-    "hooks",
-    "typescript"
-  ],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
     "@chunkflow/core": "workspace:*",
     "@chunkflow/protocol": "workspace:*"
-  },
-  "peerDependencies": {
-    "react": "^18.0.0"
   },
   "devDependencies": {
     "@testing-library/react": "^16.3.2",
@@ -50,5 +47,8 @@
     "tsdown": "^0.20.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0"
   }
 }

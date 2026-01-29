@@ -2,6 +2,18 @@
   "name": "@chunkflow/upload-component-vue",
   "version": "0.0.0",
   "description": "Vue UI components for ChunkFlow Upload SDK",
+  "keywords": [
+    "components",
+    "typescript",
+    "ui",
+    "upload",
+    "vue"
+  ],
+  "license": "MIT",
+  "author": "",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -12,9 +24,6 @@
       "import": "./dist/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsdown src/index.ts --format esm --dts",
     "dev": "tsdown src/index.ts --format esm --dts --watch",
@@ -23,21 +32,9 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
-  "keywords": [
-    "upload",
-    "vue",
-    "components",
-    "ui",
-    "typescript"
-  ],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
     "@chunkflow/core": "workspace:*",
     "@chunkflow/upload-client-vue": "workspace:*"
-  },
-  "peerDependencies": {
-    "vue": "^3.0.0"
   },
   "devDependencies": {
     "@vue/test-utils": "^2.4.6",
@@ -45,5 +42,8 @@
     "typescript": "^5.9.3",
     "vitest": "^4.0.18",
     "vue": "^3.5.27"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
   }
 }

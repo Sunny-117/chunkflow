@@ -2,6 +2,17 @@
   "name": "@chunkflow/core",
   "version": "0.0.0",
   "description": "Core upload engine for ChunkFlow Upload SDK",
+  "keywords": [
+    "chunked-upload",
+    "core",
+    "typescript",
+    "upload"
+  ],
+  "license": "MIT",
+  "author": "",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
@@ -12,9 +23,6 @@
       "import": "./dist/index.mjs"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsdown src/index.ts --format esm && tsc --emitDeclarationOnly --declaration --outDir dist",
     "dev": "tsdown src/index.ts --format esm --watch",
@@ -23,14 +31,6 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
-  "keywords": [
-    "upload",
-    "core",
-    "chunked-upload",
-    "typescript"
-  ],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
     "@chunkflow/protocol": "workspace:*",
     "@chunkflow/shared": "workspace:*"

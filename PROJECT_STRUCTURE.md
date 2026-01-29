@@ -129,11 +129,13 @@ chunkflow-upload-sdk/
 ## Technology Stack
 
 ### Build Tools
+
 - **pnpm** - Package manager with workspace support
 - **Turbo** - Monorepo build system for fast, incremental builds
 - **tsdown** - TypeScript bundler for library packages
 
 ### Development Tools
+
 - **TypeScript** - Type-safe JavaScript
 - **Vitest** - Fast unit testing framework
 - **fast-check** - Property-based testing library
@@ -143,20 +145,24 @@ chunkflow-upload-sdk/
 - **simple-git-hooks** - Git hooks management
 
 ### Version Management
+
 - **changesets** - Version and changelog management
 
 ### Frontend Frameworks
+
 - **React 18+** - For React packages and playground
 - **Vue 3+** - For Vue packages
 - **Vite** - Build tool for playground
 - **VitePress** - Documentation site generator
 
 ### Backend Framework
+
 - **Nest.js** - Server framework
 - **Fastify** - Fast HTTP server
 - **PostgreSQL** - Database
 
 ### Core Dependencies
+
 - **mitt** - Event emitter (2KB)
 - **p-limit** - Concurrency control
 - **spark-md5** - MD5 hashing for file deduplication
@@ -165,6 +171,7 @@ chunkflow-upload-sdk/
 ## Configuration Files
 
 ### Root Configuration
+
 - `package.json` - Root package with scripts and dev dependencies
 - `pnpm-workspace.yaml` - Workspace package definitions
 - `turbo.json` - Turbo pipeline configuration
@@ -173,12 +180,15 @@ chunkflow-upload-sdk/
 - `.npmrc` - pnpm configuration
 
 ### Package Configuration
+
 Each package has:
+
 - `package.json` - Package metadata and dependencies
 - `tsconfig.json` - TypeScript configuration extending root
 - `README.md` - Package documentation
 
 ### Build Configuration
+
 - **tsdown** is used for building library packages (ESM format)
 - **tsc** is used for building the server application
 - **Vite** is used for building the playground and website
@@ -186,6 +196,7 @@ Each package has:
 ## Scripts
 
 ### Root Scripts
+
 - `pnpm build` - Build all packages and apps
 - `pnpm dev` - Run all packages in watch mode
 - `pnpm test` - Run all tests
@@ -198,7 +209,9 @@ Each package has:
 - `pnpm release` - Build and publish packages
 
 ### Package Scripts
+
 Each package has:
+
 - `build` - Build the package
 - `dev` - Build in watch mode
 - `test` - Run tests

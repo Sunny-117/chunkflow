@@ -2,6 +2,18 @@
   "name": "@chunkflow/upload-component-react",
   "version": "0.0.0",
   "description": "React UI components for ChunkFlow Upload SDK",
+  "keywords": [
+    "components",
+    "react",
+    "typescript",
+    "ui",
+    "upload"
+  ],
+  "license": "MIT",
+  "author": "",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
@@ -12,9 +24,6 @@
       "import": "./dist/index.mjs"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "tsdown src/index.ts --format esm --dts",
     "dev": "tsdown src/index.ts --format esm --dts --watch",
@@ -23,22 +32,9 @@
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
-  "keywords": [
-    "upload",
-    "react",
-    "components",
-    "ui",
-    "typescript"
-  ],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
     "@chunkflow/core": "workspace:*",
     "@chunkflow/upload-client-react": "workspace:*"
-  },
-  "peerDependencies": {
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
@@ -51,5 +47,9 @@
     "tsdown": "^0.20.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
   }
 }
