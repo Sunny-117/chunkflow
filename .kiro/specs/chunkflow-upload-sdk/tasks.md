@@ -273,11 +273,11 @@
   - 如有问题请向用户询问
 
 - [~] 13. Server 层 - 存储适配器
-  - [~] 13.1 定义存储适配器接口
+  - [x] 13.1 定义存储适配器接口
     - 创建 `@chunkflow/upload-server` 包
     - 定义 StorageAdapter 接口
     - _需求: 12.6_
-  - [~] 13.2 实现本地文件系统适配器
+  - [x] 13.2 实现本地文件系统适配器
     - 实现 LocalStorageAdapter 类
     - 实现 saveChunk、getChunk、chunkExists 方法
     - 实现 chunksExist、getChunkStream 方法
@@ -287,60 +287,60 @@
     - 实现 OSSStorageAdapter 类
     - 集成 OSS SDK
     - _需求: 12.6_
-  - [~] 13.4 编写存储适配器单元测试
+  - [x] 13.4 编写存储适配器单元测试
     - 测试本地存储的 CRUD 操作
     - 测试分片存在性检查
     - 测试流式读取
     - _需求: 12.6_
 
 - [~] 14. Server 层 - 数据库适配器
-  - [~] 14.1 定义数据库适配器接口
+  - [x] 14.1 定义数据库适配器接口
     - 定义 DatabaseAdapter 接口
     - 定义 FileMetadata、ChunkEntity、FileChunkEntity 类型
     - _需求: 13.2_
-  - [~] 14.2 实现 PostgreSQL 数据库适配器
+  - [x] 14.2 实现 PostgreSQL 数据库适配器
     - 实现 PostgreSQLAdapter 类
     - 实现文件元数据的 CRUD 操作
     - 实现分片关联的管理
     - 实现事务支持
     - _需求: 13.2, 13.3_
-  - [~] 14.3 编写数据库适配器单元测试
+  - [x] 14.3 编写数据库适配器单元测试
     - 测试文件元数据操作
     - 测试分片关联操作
     - 测试事务回滚
     - _需求: 13.2, 13.3_
 
 - [~] 15. Server 层 - UploadService 实现
-  - [~] 15.1 实现 createFile 方法
+  - [x] 15.1 实现 createFile 方法
     - 生成 fileId 和 uploadToken
     - 协商分片大小
     - 保存文件元数据
     - _需求: 7.1, 12.1_
-  - [~] 15.2 实现 verifyHash 方法
+  - [x] 15.2 实现 verifyHash 方法
     - 验证 uploadToken
     - 检查文件 Hash 是否存在（秒传）
     - 检查分片 Hash 是否存在（部分秒传）
     - 返回已存在和缺失的分片列表
     - _需求: 7.2, 12.2_
-  - [~] 15.3 实现 uploadChunk 方法
+  - [x] 15.3 实现 uploadChunk 方法
     - 验证 uploadToken
     - 验证分片 Hash
     - 保存分片到存储（去重）
     - 更新文件元数据
     - _需求: 7.3, 12.3, 18.2_
-  - [~] 15.4 实现 mergeFile 方法
+  - [x] 15.4 实现 mergeFile 方法
     - 验证 uploadToken
     - 验证所有分片已上传
     - 更新文件元数据（逻辑合并）
     - 生成文件访问 URL
     - _需求: 7.4, 12.4_
-  - [~] 15.5 实现 getFileStream 方法
+  - [x] 15.5 实现 getFileStream 方法
     - 根据 fileId 查找文件元数据
     - 按顺序读取分片
     - 创建流式管道输出
     - 支持 Range 请求
     - _需求: 13.4, 19.1, 19.2, 19.4_
-  - [~] 15.6 编写 UploadService 单元测试
+  - [x] 15.6 编写 UploadService 单元测试
     - 测试创建文件流程
     - 测试 Hash 校验逻辑
     - 测试分片上传和去重
