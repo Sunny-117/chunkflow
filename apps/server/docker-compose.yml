@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: chunkflow-postgres
+    environment:
+      POSTGRES_DB: chunkflow
+      POSTGRES_USER: chunkflow
+      POSTGRES_PASSWORD: chunkflow
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U chunkflow']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build:
+      context: ../..
+      dockerfile: apps/server/Dockerfile
+    container_name: chunkflow-server
+    environment:
+      DATABASE_URL: postgresql://chunkflow:chunkflow@postgres:5432/chunkflow
+      JWT_SECRET: your-secret-key-change-in-production
+      STORAGE_PATH: /app/storage
+    ports:
+      - '3001:3001'
+    volumes:
+      - upload_storage:/app/storage
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  upload_storage:
