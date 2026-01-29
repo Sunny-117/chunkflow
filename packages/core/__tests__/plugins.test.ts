@@ -123,14 +123,25 @@ describe("Plugin System", () => {
         missingChunks: [],
       });
 
+      // Mock uploadChunk to prevent actual upload
+      mockRequestAdapter.uploadChunk.mockResolvedValue({
+        success: true,
+        chunkHash: "test-hash",
+      });
+
       const file = new File(["test content"], "test.txt", { type: "text/plain" });
       const task = manager.createTask(file);
+
+      // Wait for the start event using a promise
+      const startEventPromise = new Promise<void>((resolve) => {
+        task.on("start", () => resolve());
+      });
 
       // Start the task (will trigger start event)
       const startPromise = task.start();
 
-      // Wait a bit for the start event to be emitted
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      // Wait for the start event to be emitted
+      await startEventPromise;
 
       expect(onTaskStartSpy).toHaveBeenCalledWith(task);
 

@@ -43,9 +43,8 @@ lerna-debug.log*
 .turbo/
 
 # VitePress
-docs/.vitepress/cache/
-docs/.vitepress/dist/
-
+apps/website/docs/.vitepress/cache/
+apps/website/docs/.vitepress/dist/
 # Storage
 storage/
 uploads/

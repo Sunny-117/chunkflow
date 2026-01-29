@@ -199,39 +199,39 @@
     - **验证需求**: 5.3, 8.4, 8.6
 
 - [~] 8. Client 层 - React 适配
-  - [-] 8.1 实现 UploadProvider 和 Context
+  - [x] 8.1 实现 UploadProvider 和 Context
     - 创建 `@chunkflow/upload-client-react` 包
     - 实现 UploadContext
     - 实现 UploadProvider 组件
     - 实现 useUploadManager Hook
     - _需求: 10.1, 10.3, 10.4_
   
-  - [~] 8.2 实现 useUpload Hook
+  - [x] 8.2 实现 useUpload Hook
     - 定义 UseUploadOptions 和 UseUploadReturn 接口
     - 实现 upload、pause、resume、cancel 方法
     - 实现响应式状态管理（status、progress、error）
     - 集成生命周期回调
     - _需求: 10.1, 10.5_
   
-  - [~] 8.3 实现 useUploadList Hook
+  - [x] 8.3 实现 useUploadList Hook
     - 定义 UseUploadListReturn 接口
     - 实现 uploadFiles、pauseAll、resumeAll、cancelAll 方法
     - 实现 removeTask 方法
     - 实现响应式任务列表
     - _需求: 10.1, 10.5_
   
-  - [~] 8.4 编写 React 适配层单元测试
+  - [x] 8.4 编写 React 适配层单元测试
     - 测试 UploadProvider 初始化和清理
     - 测试 useUpload Hook 的状态管理
     - 测试 useUploadList Hook 的任务管理
     - _需求: 10.1, 10.3, 10.4, 10.5_
   
-  - [~] 8.5 编写 React 适配层属性测试
+  - [x] 8.5 编写 React 适配层属性测试
     - **属性 13**: 响应式状态更新
     - **验证需求**: 10.5
 
 - [~] 9. Client 层 - Vue 适配
-  - [~] 9.1 实现 Vue Plugin 和 Provide/Inject
+  - [-] 9.1 实现 Vue Plugin 和 Provide/Inject
     - 创建 `@chunkflow/upload-client-vue` 包
     - 实现 Vue Plugin
     - 实现 provide/inject 机制
