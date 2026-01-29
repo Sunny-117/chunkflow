@@ -8,12 +8,19 @@ CREATE TABLE IF NOT EXISTS files (
   file_type VARCHAR(100),
   file_hash VARCHAR(64),
   upload_token VARCHAR(512) NOT NULL,
+  chunk_size INT DEFAULT 0,
+  total_chunks INT DEFAULT 0,
+  uploaded_chunks INT DEFAULT 0,
+  status VARCHAR(20) DEFAULT 'pending',
+  url VARCHAR(512),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   completed_at TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_file_hash ON files(file_hash);
 CREATE INDEX IF NOT EXISTS idx_upload_token ON files(upload_token);
+CREATE INDEX IF NOT EXISTS idx_status ON files(status);
 
 -- Chunks table
 CREATE TABLE IF NOT EXISTS chunks (
