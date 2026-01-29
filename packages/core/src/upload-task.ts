@@ -832,28 +832,177 @@ export class UploadTask {
 
   /**
    * Pauses the upload
-   * This will be implemented in subsequent tasks
+   *
+   * Pauses an ongoing upload by changing the status to 'paused'.
+   * The upload can be resumed later from where it left off.
+   *
+   * @remarks
+   * - Validates: Requirements 4.3, 6.3 (pause functionality and lifecycle events)
+   * - Only works when status is 'uploading'
+   * - Emits 'pause' event
+   * - Progress is persisted to IndexedDB for resume
+   * - Ongoing chunk uploads will complete, but no new chunks will start
+   *
+   * @example
+   * ```typescript
+   * task.on('pause', () => {
+   *   console.log('Upload paused');
+   * });
+   *
+   * task.pause();
+   * ```
    */
   pause(): void {
-    // TODO: Implement in task 5.7
-    throw new Error("Not implemented yet");
+    // Only allow pausing when upload is in progress
+    if (this.status !== "uploading") {
+      console.warn(`Cannot pause upload: current status is ${this.status}`);
+      return;
+    }
+
+    // Update status to paused
+    this.status = "paused" as UploadStatus;
+
+    // Emit pause event
+    this.eventBus.emit("pause", { taskId: this.id });
+
+    // Note: Ongoing chunk uploads will complete naturally
+    // The startUpload method checks status before starting new chunks
+    // Progress is already persisted to IndexedDB via updateProgress
   }
 
   /**
-   * Resumes a paused upload
-   * This will be implemented in subsequent tasks
+   * Resumes a paused upload (断点续传)
+   *
+   * Resumes an upload that was previously paused.
+   * Continues uploading from where it left off, skipping already uploaded chunks.
+   *
+   * @throws Error if upload is not in paused state
+   *
+   * @remarks
+   * - Validates: Requirements 4.3, 4.4, 6.3 (resume functionality and lifecycle events)
+   * - Only works when status is 'paused'
+   * - Emits 'resume' event
+   * - Continues from last uploaded chunk
+   * - Uses persisted progress from IndexedDB
+   *
+   * @example
+   * ```typescript
+   * task.on('resume', () => {
+   *   console.log('Upload resumed');
+   * });
+   *
+   * await task.resume();
+   * ```
    */
   async resume(): Promise<void> {
-    // TODO: Implement in task 5.7
-    throw new Error("Not implemented yet");
+    // Only allow resuming when upload is paused
+    if (this.status !== "paused") {
+      throw new Error(`Cannot resume upload: current status is ${this.status}`);
+    }
+
+    try {
+      // Update status to uploading
+      this.status = "uploading" as UploadStatus;
+
+      // Emit resume event
+      this.eventBus.emit("resume", { taskId: this.id });
+
+      // Continue uploading remaining chunks
+      // The startUpload method will skip already uploaded chunks
+      // because progress.uploadedChunks tracks which chunks are done
+      await this.startUpload();
+
+      // If upload completed successfully
+      if (this.status === "uploading" && !this.shouldCancelUpload) {
+        this.status = "success" as UploadStatus;
+        this.endTime = Date.now();
+
+        // Emit success event
+        // Note: fileUrl would need to be obtained from merge operation
+        // For now, we emit success without URL (will be handled in merge task)
+        this.eventBus.emit("success", {
+          taskId: this.id,
+          fileUrl: "", // Will be set by merge operation
+        });
+      }
+    } catch (error) {
+      this.status = "error" as UploadStatus;
+      this.endTime = Date.now();
+      this.eventBus.emit("error", {
+        taskId: this.id,
+        error: error as Error,
+      });
+      throw error;
+    }
   }
 
   /**
    * Cancels the upload
-   * This will be implemented in subsequent tasks
+   *
+   * Cancels an ongoing or paused upload.
+   * Once cancelled, the upload cannot be resumed.
+   *
+   * @remarks
+   * - Validates: Requirements 6.3 (cancel functionality and lifecycle events)
+   * - Works when status is 'uploading' or 'paused'
+   * - Emits 'cancel' event
+   * - Sets shouldCancelUpload flag to stop ongoing chunk uploads
+   * - Cleans up upload record from IndexedDB
+   * - Status becomes 'cancelled' (terminal state)
+   *
+   * @example
+   * ```typescript
+   * task.on('cancel', () => {
+   *   console.log('Upload cancelled');
+   * });
+   *
+   * task.cancel();
+   * ```
    */
   cancel(): void {
-    // TODO: Implement in task 5.7
-    throw new Error("Not implemented yet");
+    // Only allow cancelling when upload is in progress or paused
+    if (this.status !== "uploading" && this.status !== "paused") {
+      console.warn(`Cannot cancel upload: current status is ${this.status}`);
+      return;
+    }
+
+    // Set cancel flag to stop ongoing uploads
+    this.shouldCancelUpload = true;
+
+    // Update status to cancelled
+    this.status = "cancelled" as UploadStatus;
+    this.endTime = Date.now();
+
+    // Emit cancel event
+    this.eventBus.emit("cancel", { taskId: this.id });
+
+    // Clean up upload record from IndexedDB
+    // This is done asynchronously and errors are ignored
+    this.cleanupStorage().catch((error) => {
+      console.warn("Failed to cleanup upload storage:", error);
+    });
+  }
+
+  /**
+   * Cleans up the upload record from IndexedDB
+   *
+   * Removes the upload record to free up storage space.
+   * Called when upload is cancelled or completed.
+   *
+   * @remarks
+   * - Gracefully handles storage errors
+   * - Does not throw errors
+   *
+   * @internal
+   */
+  private async cleanupStorage(): Promise<void> {
+    try {
+      if (this.storage.isAvailable()) {
+        await this.storage.deleteRecord(this.id);
+      }
+    } catch (error) {
+      // Ignore cleanup errors
+      console.warn("Failed to cleanup storage:", error);
+    }
   }
 }
