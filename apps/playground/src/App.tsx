@@ -5,16 +5,17 @@ import BasicUploadDemo from "./demos/BasicUploadDemo";
 import MultiFileUploadDemo from "./demos/MultiFileUploadDemo";
 import ResumeUploadDemo from "./demos/ResumeUploadDemo";
 import InstantUploadDemo from "./demos/InstantUploadDemo";
+import SimpleTest from "./demos/SimpleTest";
 import "./App.css";
 
 const requestAdapter = new FetchRequestAdapter({
   baseURL: "http://localhost:3001",
 });
 
-type DemoTab = "basic" | "multi" | "resume" | "instant";
+type DemoTab = "simple" | "basic" | "multi" | "resume" | "instant";
 
 function App() {
-  const [activeTab, setActiveTab] = useState<DemoTab>("basic");
+  const [activeTab, setActiveTab] = useState<DemoTab>("simple");
 
   return (
     <UploadProvider requestAdapter={requestAdapter}>
@@ -25,6 +26,12 @@ function App() {
         </header>
 
         <nav className="app-nav">
+          <button
+            className={activeTab === "simple" ? "active" : ""}
+            onClick={() => setActiveTab("simple")}
+          >
+            <span>Simple Test</span>
+          </button>
           <button
             className={activeTab === "basic" ? "active" : ""}
             onClick={() => setActiveTab("basic")}
@@ -52,6 +59,7 @@ function App() {
         </nav>
 
         <main className="app-main">
+          {activeTab === "simple" && <SimpleTest />}
           {activeTab === "basic" && <BasicUploadDemo />}
           {activeTab === "multi" && <MultiFileUploadDemo />}
           {activeTab === "resume" && <ResumeUploadDemo />}

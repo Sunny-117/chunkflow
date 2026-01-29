@@ -451,9 +451,35 @@ export class UploadTask {
       // This implements requirement 3.6 and 17.2 - hash calculation and upload should be parallel
       await Promise.all([this.startUpload(), this.calculateAndVerifyHash()]);
 
-      // Upload completed successfully
-      this.status = "success" as UploadStatus;
-      this.endTime = Date.now();
+      // Step 4: Merge file if upload completed successfully
+      if (this.status === "uploading" && !this.shouldCancelUpload) {
+        // Call merge API
+        const mergeResponse = await this.requestAdapter.mergeFile({
+          uploadToken: this.uploadToken!.token,
+          fileHash: this.fileHash || "",
+          chunkHashes: this.chunks.map((chunk) => chunk.hash),
+        });
+
+        if (mergeResponse.success) {
+          // Upload completed successfully
+          this.status = "success" as UploadStatus;
+          this.endTime = Date.now();
+
+          // Emit success event with file URL
+          this.eventBus.emit("success", {
+            taskId: this.id,
+            fileUrl: mergeResponse.fileUrl,
+          });
+        } else {
+          throw new Error("Merge failed: response.success is false");
+        }
+      } else {
+        // If instant upload was triggered, status is already success
+        if (this.status !== "success") {
+          this.status = "success" as UploadStatus;
+          this.endTime = Date.now();
+        }
+      }
     } catch (error) {
       this.status = "error" as UploadStatus;
       this.endTime = Date.now();
@@ -982,20 +1008,6 @@ export class UploadTask {
       // The startUpload method will skip already uploaded chunks
       // because progress.uploadedChunks tracks which chunks are done
       await this.startUpload();
-
-      // If upload completed successfully
-      if (this.status === "uploading" && !this.shouldCancelUpload) {
-        this.status = "success" as UploadStatus;
-        this.endTime = Date.now();
-
-        // Emit success event
-        // Note: fileUrl would need to be obtained from merge operation
-        // For now, we emit success without URL (will be handled in merge task)
-        this.eventBus.emit("success", {
-          taskId: this.id,
-          fileUrl: "", // Will be set by merge operation
-        });
-      }
     } catch (error) {
       this.status = "error" as UploadStatus;
       this.endTime = Date.now();
