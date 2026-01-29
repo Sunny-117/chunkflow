@@ -255,18 +255,18 @@
     - _需求: 11.1, 11.2, 11.4, 11.5, 11.6_
 
 - [~] 11. Component 层 - Vue 组件
-  - [-] 11.1 实现 Vue 上传组件
+  - [x] 11.1 实现 Vue 上传组件
     - 创建 `@chunkflow/upload-component-vue` 包
     - 实现 UploadButton.vue
     - 实现 UploadProgress.vue
     - 实现 UploadList.vue
     - 实现 UploadDropzone.vue
     - _需求: 11.1, 11.2, 11.4, 11.5, 11.6_
-  - [~] 11.2 编写 Vue 组件单元测试
+  - [~]\* 11.2 编写 Vue 组件单元测试
     - 测试各组件的功能
     - _需求: 11.1, 11.2, 11.4, 11.5, 11.6_
 
-- [~] 12. Checkpoint - 前端功能完整性验证
+- [~]\* 12. Checkpoint - 前端功能完整性验证
   - 确保所有前端测试通过
   - 在 Playground 中测试完整的上传流程
   - 测试 React 和 Vue 组件的功能
