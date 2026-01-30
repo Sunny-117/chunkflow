@@ -1,0 +1,13 @@
+/* 自定义 logo 大小 */
+.VPImage.image-src {
+  max-width: 400px !important;
+  max-height: 400px !important;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .VPImage.image-src {
+    max-width: 300px !important;
+    max-height: 300px !important;
+  }
+}

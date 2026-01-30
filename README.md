@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./assets/logo.png" alt="ChunkFlow Logo" width="200" height="200" />
+  <img src="./assets/logo.png" alt="ChunkFlow Logo" width="300" height="300" />
   <h1>ChunkFlow Upload SDK</h1>
   <p>
     <strong>A Universal Large File Upload Solution</strong>
