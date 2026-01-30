@@ -229,5 +229,5 @@ export function useUpload(options: UseUploadOptions = {}): UseUploadReturn {
     progress,
     error,
     task,
-  };
+  } as UseUploadReturn;
 }

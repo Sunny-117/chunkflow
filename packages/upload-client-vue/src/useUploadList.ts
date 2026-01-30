@@ -194,5 +194,5 @@ export function useUploadList(): UseUploadListReturn {
     removeTask,
     clearCompleted,
     getStatistics,
-  };
+  } as UseUploadListReturn;
 }
