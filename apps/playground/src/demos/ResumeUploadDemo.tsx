@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { useUploadManager } from "@chunkflow/upload-client-react";
-import { UploadButton, UploadList } from "@chunkflow/upload-component-react";
+import { useUploadManager, useUploadList } from "@chunkflow/upload-client-react";
+import { UploadButton } from "@chunkflow/upload-component-react";
+import { message } from "antd";
 
 function ResumeUploadDemo() {
   const manager = useUploadManager();
+  const { uploadFiles } = useUploadList();
   const [unfinishedTasks, setUnfinishedTasks] = useState<any[]>([]);
 
   useEffect(() => {
@@ -12,7 +14,7 @@ function ResumeUploadDemo() {
         const tasks = manager.getAllTasks();
         const unfinished = tasks.filter((task) => {
           const status = task.getStatus();
-          return status !== "success" && status !== "error";
+          return status !== "success" && status !== "error" && status !== "cancelled";
         });
         setUnfinishedTasks(unfinished);
       }
@@ -23,11 +25,20 @@ function ResumeUploadDemo() {
 
   const handleResumeAll = async () => {
     if (manager) {
-      for (const task of unfinishedTasks) {
-        await task.resume();
+      try {
+        for (const task of unfinishedTasks) {
+          await task.resume();
+        }
+        setUnfinishedTasks([]);
+        message.success("All uploads resumed!");
+      } catch (error) {
+        message.error(`Failed to resume: ${(error as Error).message}`);
       }
-      setUnfinishedTasks([]);
     }
+  };
+
+  const handleFileSelect = (files: File[]) => {
+    uploadFiles(files);
   };
 
   return (
@@ -50,7 +61,15 @@ function ResumeUploadDemo() {
         </div>
       )}
 
-      <UploadButton accept="*/*" multiple maxSize={1024 * 1024 * 1024}>
+      <UploadButton
+        accept="*/*"
+        multiple
+        maxSize={1024 * 1024 * 1024}
+        onSelect={handleFileSelect}
+        onError={(error) => {
+          message.error(`Validation error: ${error.message}`);
+        }}
+      >
         Select Files
       </UploadButton>
 
@@ -63,8 +82,6 @@ function ResumeUploadDemo() {
           <li>Return and resume—only missing chunks upload</li>
         </ol>
       </div>
-
-      <UploadList />
     </div>
   );
 }

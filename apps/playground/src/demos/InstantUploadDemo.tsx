@@ -1,34 +1,54 @@
 import { useState } from "react";
-import { useUpload } from "@chunkflow/upload-client-react";
+import { useUploadManager } from "@chunkflow/upload-client-react";
 import { UploadButton } from "@chunkflow/upload-component-react";
+import { message } from "antd";
 
 function InstantUploadDemo() {
+  const manager = useUploadManager();
   const [uploadHistory, setUploadHistory] = useState<
-    Array<{ fileName: string; isInstant: boolean; time: string }>
+    Array<{ fileName: string; isInstant: boolean; time: string; duration: number }>
   >([]);
-
-  const { upload } = useUpload({
-    onSuccess: (fileId: string) => {
-      console.log("Upload completed:", fileId);
-    },
-  });
 
   const handleFileSelect = async (files: File[]) => {
     for (const file of files) {
       const startTime = Date.now();
-      await upload(file);
-      const duration = Date.now() - startTime;
 
-      const isInstant = duration < 1000;
+      try {
+        const task = manager.createTask(file);
 
-      setUploadHistory((prev) => [
-        {
-          fileName: file.name,
-          isInstant,
-          time: new Date().toLocaleTimeString(),
-        },
-        ...prev,
-      ]);
+        let wasInstant = false;
+
+        task.on("success", ({ fileUrl }) => {
+          const duration = Date.now() - startTime;
+          const isInstant = duration < 1000;
+
+          setUploadHistory((prev) => [
+            {
+              fileName: file.name,
+              isInstant,
+              time: new Date().toLocaleTimeString(),
+              duration,
+            },
+            ...prev,
+          ]);
+
+          if (isInstant) {
+            message.success(`${file.name} - Instant upload! (${duration}ms)`);
+          } else {
+            message.success(
+              `${file.name} uploaded successfully (${(duration / 1000).toFixed(1)}s)`,
+            );
+          }
+        });
+
+        task.on("error", ({ error }) => {
+          message.error(`Upload failed: ${error.message}`);
+        });
+
+        await task.start();
+      } catch (error) {
+        message.error(`Failed to start upload: ${(error as Error).message}`);
+      }
     }
   };
 
@@ -45,6 +65,9 @@ function InstantUploadDemo() {
         multiple={false}
         maxSize={1024 * 1024 * 1024}
         onSelect={handleFileSelect}
+        onError={(error) => {
+          message.error(`Validation error: ${error.message}`);
+        }}
       >
         Select File
       </UploadButton>
@@ -72,10 +95,13 @@ function InstantUploadDemo() {
                       item.isInstant ? "status-completed" : "status-uploading"
                     }`}
                   >
-                    {item.isInstant ? "Instant" : "Normal"}
+                    {item.isInstant ? "⚡ Instant" : "📤 Normal"}
                   </span>
                 </div>
-                <div className="file-size">{item.time}</div>
+                <div className="file-size">
+                  {item.time} -{" "}
+                  {item.isInstant ? `${item.duration}ms` : `${(item.duration / 1000).toFixed(1)}s`}
+                </div>
               </div>
             ))}
           </div>

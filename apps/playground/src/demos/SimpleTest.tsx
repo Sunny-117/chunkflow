@@ -58,9 +58,7 @@ function SimpleTest() {
         style={{ padding: "10px", fontSize: "16px" }}
       />
 
-      <div
-        style={{ marginTop: "20px", padding: "10px", background: "#f5f5f5", borderRadius: "4px" }}
-      >
+      <div style={{ marginTop: "20px", padding: "10px", borderRadius: "4px" }}>
         <p>
           <strong>Instructions:</strong>
         </p>

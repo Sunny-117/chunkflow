@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { UploadProvider } from "@chunkflow/upload-client-react";
 import { FetchRequestAdapter } from "./adapters/fetch-request-adapter";
+import { UploadList } from "@chunkflow/upload-component-react";
 import BasicUploadDemo from "./demos/BasicUploadDemo";
 import MultiFileUploadDemo from "./demos/MultiFileUploadDemo";
 import ResumeUploadDemo from "./demos/ResumeUploadDemo";
@@ -25,46 +26,57 @@ function App() {
           <p>Large file uploads that don't suck. Chunked, resumable, and blazingly fast.</p>
         </header>
 
-        <nav className="app-nav">
-          <button
-            className={activeTab === "simple" ? "active" : ""}
-            onClick={() => setActiveTab("simple")}
-          >
-            <span>Simple Test</span>
-          </button>
-          <button
-            className={activeTab === "basic" ? "active" : ""}
-            onClick={() => setActiveTab("basic")}
-          >
-            <span>Basic Upload</span>
-          </button>
-          <button
-            className={activeTab === "multi" ? "active" : ""}
-            onClick={() => setActiveTab("multi")}
-          >
-            <span>Multi-File</span>
-          </button>
-          <button
-            className={activeTab === "resume" ? "active" : ""}
-            onClick={() => setActiveTab("resume")}
-          >
-            <span>Breakpoint Resume</span>
-          </button>
-          <button
-            className={activeTab === "instant" ? "active" : ""}
-            onClick={() => setActiveTab("instant")}
-          >
-            <span>Instant Upload</span>
-          </button>
-        </nav>
+        <div className="app-container">
+          <aside className="app-sidebar">
+            <nav className="app-nav">
+              <button
+                className={activeTab === "simple" ? "active" : ""}
+                onClick={() => setActiveTab("simple")}
+              >
+                <span>Simple Test</span>
+              </button>
+              <button
+                className={activeTab === "basic" ? "active" : ""}
+                onClick={() => setActiveTab("basic")}
+              >
+                <span>Basic Upload</span>
+              </button>
+              <button
+                className={activeTab === "multi" ? "active" : ""}
+                onClick={() => setActiveTab("multi")}
+              >
+                <span>Multi-File</span>
+              </button>
+              <button
+                className={activeTab === "resume" ? "active" : ""}
+                onClick={() => setActiveTab("resume")}
+              >
+                <span>Breakpoint Resume</span>
+              </button>
+              <button
+                className={activeTab === "instant" ? "active" : ""}
+                onClick={() => setActiveTab("instant")}
+              >
+                <span>Instant Upload</span>
+              </button>
+            </nav>
+          </aside>
 
-        <main className="app-main">
-          {activeTab === "simple" && <SimpleTest />}
-          {activeTab === "basic" && <BasicUploadDemo />}
-          {activeTab === "multi" && <MultiFileUploadDemo />}
-          {activeTab === "resume" && <ResumeUploadDemo />}
-          {activeTab === "instant" && <InstantUploadDemo />}
-        </main>
+          <main className="app-main">
+            <div className="demo-content">
+              {activeTab === "simple" && <SimpleTest />}
+              {activeTab === "basic" && <BasicUploadDemo />}
+              {activeTab === "multi" && <MultiFileUploadDemo />}
+              {activeTab === "resume" && <ResumeUploadDemo />}
+              {activeTab === "instant" && <InstantUploadDemo />}
+            </div>
+
+            <div className="upload-list-container">
+              <h3>Upload Queue</h3>
+              <UploadList />
+            </div>
+          </main>
+        </div>
 
         <footer className="app-footer">
           <p>
