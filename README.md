@@ -105,7 +105,7 @@ function UploadComponent() {
 
 ### Vue Usage
 
-```vue
+```html
 <script setup>
 import { useUpload } from "@chunkflow/upload-client-vue";
 
