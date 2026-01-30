@@ -17,10 +17,26 @@ function InstantUploadDemo() {
         const task = manager.createTask(file);
 
         let wasInstant = false;
+        let maxProgress = 0;
+
+        // Track progress to detect instant upload
+        task.on("progress", ({ progress }) => {
+          maxProgress = Math.max(maxProgress, progress);
+        });
+
+        // Listen for hash complete event
+        task.on("hashComplete", () => {
+          console.log(`[InstantUpload] Hash calculated for ${file.name}`);
+        });
 
         task.on("success", ({ fileUrl }) => {
           const duration = Date.now() - startTime;
-          const isInstant = duration < 1000;
+
+          // Instant upload is detected when:
+          // 1. Upload completes very quickly (< 2 seconds)
+          // 2. Progress never went beyond initial chunks (< 5%)
+          // This means the file was found on server before actual upload started
+          const isInstant = duration < 2000 && maxProgress < 5;
 
           setUploadHistory((prev) => [
             {
@@ -33,10 +49,16 @@ function InstantUploadDemo() {
           ]);
 
           if (isInstant) {
-            message.success(`${file.name} - Instant upload! (${duration}ms)`);
+            message.success(`⚡ ${file.name} - Instant upload! (${duration}ms)`, 5);
+            console.log(
+              `[InstantUpload] Instant upload detected: ${file.name} (${duration}ms, max progress: ${maxProgress.toFixed(1)}%)`,
+            );
           } else {
             message.success(
               `${file.name} uploaded successfully (${(duration / 1000).toFixed(1)}s)`,
+            );
+            console.log(
+              `[InstantUpload] Normal upload: ${file.name} (${(duration / 1000).toFixed(1)}s, max progress: ${maxProgress.toFixed(1)}%)`,
             );
           }
         });
@@ -54,7 +76,7 @@ function InstantUploadDemo() {
 
   return (
     <div className="demo-section">
-      <h2>Instant Upload</h2>
+      <h2>Instant Upload (秒传)</h2>
       <p>
         Content-based deduplication. If someone already uploaded this exact file, you skip the
         upload entirely. Hash verification happens in milliseconds. Works across all users.
@@ -76,9 +98,12 @@ function InstantUploadDemo() {
         <h4>How to Test</h4>
         <ol>
           <li>Upload any file (first time = normal upload)</li>
-          <li>Upload the same file again</li>
-          <li>Second upload completes instantly</li>
+          <li>
+            Upload the <strong>same file</strong> again
+          </li>
+          <li>Second upload completes instantly with ⚡ icon</li>
           <li>Try renaming the file—still instant if content matches</li>
+          <li>Check console logs for detailed instant upload detection</li>
         </ol>
       </div>
 
@@ -94,6 +119,7 @@ function InstantUploadDemo() {
                     className={`status-badge ${
                       item.isInstant ? "status-completed" : "status-uploading"
                     }`}
+                    style={item.isInstant ? { background: "#4caf50" } : {}}
                   >
                     {item.isInstant ? "⚡ Instant" : "📤 Normal"}
                   </span>
