@@ -162,7 +162,9 @@ echo -e "${YELLOW}🔗 Step 5: Merging chunks...${NC}"
 MERGE_RESPONSE=$(curl -s -X POST "$SERVER_URL/upload/merge" \
   -H "Content-Type: application/json" \
   -d "{
-    \"uploadToken\": \"$UPLOAD_TOKEN\"
+    \"uploadToken\": \"$UPLOAD_TOKEN\",
+    \"fileHash\": \"$FILE_HASH\",
+    \"chunkHashes\": $CHUNK_HASHES_JSON
   }")
 
 SUCCESS=$(echo "$MERGE_RESPONSE" | jq -r '.success')

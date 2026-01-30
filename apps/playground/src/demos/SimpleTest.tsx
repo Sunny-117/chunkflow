@@ -1,4 +1,5 @@
 import { useUploadManager } from "@chunkflow/upload-client-react";
+import { message } from "antd";
 
 function SimpleTest() {
   const manager = useUploadManager();
@@ -26,13 +27,13 @@ function SimpleTest() {
     task.on("success", ({ fileUrl }) => {
       console.log("[Event] Upload SUCCESS!");
       console.log("File URL:", fileUrl);
-      alert(`✅ Upload complete!\n\nFile URL: ${fileUrl}`);
+      message.success(`Upload complete! File URL: ${fileUrl}`);
     });
 
     task.on("error", ({ error }) => {
       console.error("[Event] Upload ERROR:", error);
       console.error("Error stack:", error.stack);
-      alert(`❌ Upload failed!\n\nError: ${error.message}\n\nCheck console for details.`);
+      message.error(`Upload failed: ${error.message}. Check console for details.`);
     });
 
     try {
@@ -42,7 +43,7 @@ function SimpleTest() {
     } catch (error) {
       console.error("Failed to start upload:", error);
       console.error("Error details:", error);
-      alert(`❌ Failed to start upload!\n\nError: ${(error as Error).message}`);
+      message.error(`Failed to start upload: ${(error as Error).message}`);
     }
   };
 

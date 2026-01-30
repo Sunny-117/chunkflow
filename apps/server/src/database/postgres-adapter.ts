@@ -116,6 +116,10 @@ export class PostgresAdapter implements DatabaseAdapter {
       fields.push(`url = $${paramIndex++}`);
       values.push(options.url);
     }
+    if (options.fileHash !== undefined) {
+      fields.push(`file_hash = $${paramIndex++}`);
+      values.push(options.fileHash);
+    }
 
     values.push(fileId);
     await this.pool.query(

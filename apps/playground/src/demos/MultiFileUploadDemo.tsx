@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useUploadList } from "@chunkflow/upload-client-react";
 import { UploadDropzone, UploadList } from "@chunkflow/upload-component-react";
+import { message } from "antd";
 
 function MultiFileUploadDemo() {
   const { tasks, uploadFiles, pauseAll, resumeAll, cancelAll } = useUploadList();
@@ -37,7 +38,7 @@ function MultiFileUploadDemo() {
         maxSize={1024 * 1024 * 1024}
         onDrop={handleDrop}
         onError={(error) => {
-          alert(`Validation error: ${error.message}`);
+          message.error(`Validation error: ${error.message}`);
         }}
       >
         <div style={{ textAlign: "center", padding: "60px 40px" }}>

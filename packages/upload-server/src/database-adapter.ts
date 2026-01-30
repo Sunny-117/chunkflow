@@ -100,6 +100,7 @@ export interface UpdateFileOptions {
   status?: "pending" | "uploading" | "completed" | "failed";
   completedAt?: Date;
   url?: string;
+  fileHash?: string;
 }
 
 /**

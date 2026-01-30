@@ -119,7 +119,6 @@ export class FetchRequestAdapter implements RequestAdapter {
   }
 
   async mergeFile(request: MergeFileRequest): Promise<MergeFileResponse> {
-    // Server only needs uploadToken, not fileHash and chunkHashes
     const token =
       typeof request.uploadToken === "string" ? request.uploadToken : request.uploadToken;
 
@@ -130,6 +129,8 @@ export class FetchRequestAdapter implements RequestAdapter {
       },
       body: JSON.stringify({
         uploadToken: token,
+        fileHash: request.fileHash,
+        chunkHashes: request.chunkHashes,
       }),
     });
 

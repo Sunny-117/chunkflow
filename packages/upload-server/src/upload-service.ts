@@ -365,22 +365,16 @@ export class UploadService {
       throw new Error(`Not all chunks uploaded: ${file.uploadedChunks}/${file.totalChunks}`);
     }
 
-    // Update file hash
-    await this.databaseAdapter.updateFile(fileId, {
-      status: "completed",
-      completedAt: new Date(),
-    });
-
-    // Update file metadata with hash
-    const updatedFile = await this.databaseAdapter.getFile(fileId);
-    if (updatedFile) {
-      await this.databaseAdapter.updateFile(fileId, {
-        url: `/upload/files/${fileId}`,
-      });
-    }
-
     // Generate file access URL
     const url = `/upload/files/${fileId}`;
+
+    // Update file with hash, status, and URL
+    await this.databaseAdapter.updateFile(fileId, {
+      fileHash: request.fileHash,
+      status: "completed",
+      completedAt: new Date(),
+      url,
+    });
 
     return {
       success: true,

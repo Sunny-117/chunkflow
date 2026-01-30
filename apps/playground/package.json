@@ -16,6 +16,7 @@
     "@chunkflow/protocol": "workspace:*",
     "@chunkflow/upload-client-react": "workspace:*",
     "@chunkflow/upload-component-react": "workspace:*",
+    "antd": "^6.2.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },

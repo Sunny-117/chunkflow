@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev --concurrency=15",
+    "dev": "turbo run dev --filter='./packages/*' --concurrency=15",
     "test": "turbo run test",
     "lint": "oxlint .",
     "format": "oxfmt .",
