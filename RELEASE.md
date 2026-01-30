@@ -32,6 +32,7 @@ pnpm release
 ### 正式发布流程
 
 运行 `pnpm release` 会自动：
+
 1. 构建所有包
 2. 运行测试
 3. 类型检查
@@ -46,6 +47,7 @@ pnpm release
 ### Alpha 发布流程
 
 运行 `./scripts/release-alpha.sh 0.0.1-alpha.1` 会：
+
 1. 更新所有包版本号为指定版本
 2. 构建和测试
 3. 发布到 npm 的 `alpha` tag
@@ -113,11 +115,13 @@ gh release create v$VERSION --title "ChunkFlow v$VERSION" --notes-file CHANGELOG
 ## 常见问题
 
 **Q: Alpha 版本如何安装？**
+
 ```bash
 npm install @chunkflow/core@alpha
 ```
 
 **Q: 如何回滚发布？**
+
 ```bash
 # npm 撤回（24小时内）
 npm unpublish @chunkflow/core@0.0.1
@@ -129,6 +133,7 @@ git push origin :refs/tags/v0.0.1
 ```
 
 **Q: 发布失败怎么办？**
+
 - 检查 npm 登录：`npm whoami`
 - 检查包名是否可用
 - 查看错误日志

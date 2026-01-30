@@ -107,17 +107,17 @@ function UploadComponent() {
 
 ```html
 <script setup>
-import { useUpload } from "@chunkflow/upload-client-vue";
+  import { useUpload } from "@chunkflow/upload-client-vue";
 
-const { upload, status, progress } = useUpload({
-  onSuccess: (fileUrl) => console.log("上传完成:", fileUrl),
-  onError: (error) => console.error("上传失败:", error),
-});
+  const { upload, status, progress } = useUpload({
+    onSuccess: (fileUrl) => console.log("上传完成:", fileUrl),
+    onError: (error) => console.error("上传失败:", error),
+  });
 
-const handleFileChange = (event) => {
-  const file = event.target.files?.[0];
-  if (file) upload(file);
-};
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
+    if (file) upload(file);
+  };
 </script>
 
 <template>
