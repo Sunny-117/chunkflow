@@ -7,6 +7,7 @@ import MultiFileUploadDemo from "./demos/MultiFileUploadDemo";
 import ResumeUploadDemo from "./demos/ResumeUploadDemo";
 import InstantUploadDemo from "./demos/InstantUploadDemo";
 import SimpleTest from "./demos/SimpleTest";
+import HashPerformanceDemo from "./demos/HashPerformanceDemo";
 import "./App.css";
 
 const requestAdapter = new FetchRequestAdapter({
@@ -15,7 +16,7 @@ const requestAdapter = new FetchRequestAdapter({
 
 const SERVER_BASE_URL = "http://localhost:3001";
 
-type DemoTab = "simple" | "basic" | "multi" | "resume" | "instant";
+type DemoTab = "simple" | "basic" | "multi" | "resume" | "instant" | "performance";
 
 function App() {
   const [activeTab, setActiveTab] = useState<DemoTab>("simple");
@@ -61,6 +62,12 @@ function App() {
               >
                 <span>Instant Upload</span>
               </button>
+              <button
+                className={activeTab === "performance" ? "active" : ""}
+                onClick={() => setActiveTab("performance")}
+              >
+                <span>⚡ Hash Performance</span>
+              </button>
             </nav>
           </aside>
 
@@ -71,12 +78,16 @@ function App() {
               {activeTab === "multi" && <MultiFileUploadDemo />}
               {activeTab === "resume" && <ResumeUploadDemo />}
               {activeTab === "instant" && <InstantUploadDemo />}
+              {activeTab === "performance" && <HashPerformanceDemo />}
             </div>
 
-            <div className="upload-list-container">
-              <h3>Upload Queue</h3>
-              <UploadList baseURL={SERVER_BASE_URL} />
-            </div>
+            {/* Only show Upload Queue for upload demos, not for performance demo */}
+            {activeTab !== "performance" && (
+              <div className="upload-list-container">
+                <h3>Upload Queue</h3>
+                <UploadList baseURL={SERVER_BASE_URL} />
+              </div>
+            )}
           </main>
         </div>
 

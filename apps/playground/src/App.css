@@ -213,6 +213,11 @@ body::after {
   min-height: 600px;
 }
 
+/* 当只有一列时（没有 Upload Queue），让内容占据全宽 */
+.app-main:has(.demo-content:only-child) {
+  grid-template-columns: 1fr;
+}
+
 .demo-content {
   background: var(--card-bg);
   border: 1px solid var(--border);
