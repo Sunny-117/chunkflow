@@ -5,6 +5,7 @@ Complete server application for ChunkFlow Upload SDK built with NestJS.
 ## Description
 
 This is a production-ready server implementation using:
+
 - NestJS framework
 - Fastify for high performance
 - PostgreSQL for metadata storage
@@ -34,7 +35,7 @@ The server will start on `http://localhost:3001`.
 
 ## Database Setup
 
-The server requires a PostgreSQL database. 
+The server requires a PostgreSQL database.
 
 ### Option 1: Use Local PostgreSQL (Recommended for Development)
 
@@ -94,11 +95,13 @@ The server will start on `http://localhost:3001` by default.
 ## API Endpoints
 
 ### Health Check
+
 ```
 GET /health
 ```
 
 ### Upload Endpoints
+
 ```
 POST /upload/create      - Create upload session
 POST /upload/verify      - Verify file/chunk hashes

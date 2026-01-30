@@ -27,6 +27,7 @@ curl -X POST http://localhost:3001/upload/create \
 ```
 
 **响应**:
+
 - `uploadToken`: JWT 令牌，用于后续请求认证
 - `negotiatedChunkSize`: 2,097,152 bytes (2MB)
 - **总分片数**: 181 个
@@ -50,6 +51,7 @@ curl -X POST http://localhost:3001/upload/verify \
 ```
 
 **响应**:
+
 - `fileExists`: false (文件不存在)
 - `existingChunks`: [] (没有已存在的分片)
 - `missingChunks`: [0-180] (需要上传所有分片)
@@ -67,6 +69,7 @@ curl -X POST http://localhost:3001/upload/chunk \
 ```
 
 **每个分片响应**:
+
 ```json
 {
   "success": true,
@@ -87,6 +90,7 @@ curl -X POST http://localhost:3001/upload/merge \
 ```
 
 **响应**:
+
 ```json
 {
   "success": true,
@@ -105,6 +109,7 @@ curl http://localhost:3001/upload/files/e53bfbb50ce361d03aba3b945080ea89 \
 ```
 
 **验证结果**:
+
 - 原始文件 MD5: `4890a70dfa0612bc3f2ee8ac514b79a8`
 - 下载文件 MD5: `4890a70dfa0612bc3f2ee8ac514b79a8`
 - ✅ **完全匹配！**
@@ -117,37 +122,37 @@ curl http://localhost:3001/upload/files/e53bfbb50ce361d03aba3b945080ea89 \
 SELECT * FROM files WHERE file_id = 'e53bfbb50ce361d03aba3b945080ea89';
 ```
 
-| 字段 | 值 |
-|------|-----|
-| file_id | e53bfbb50ce361d03aba3b945080ea89 |
-| file_name | 硕1.mp4 |
-| file_size | 377,799,386 bytes (360 MB) |
-| chunk_size | 2,097,152 bytes (2 MB) |
-| total_chunks | 181 |
-| uploaded_chunks | 181 |
-| status | completed |
-| url | /upload/files/e53bfbb50ce361d03aba3b945080ea89 |
+| 字段            | 值                                             |
+| --------------- | ---------------------------------------------- |
+| file_id         | e53bfbb50ce361d03aba3b945080ea89               |
+| file_name       | 硕1.mp4                                        |
+| file_size       | 377,799,386 bytes (360 MB)                     |
+| chunk_size      | 2,097,152 bytes (2 MB)                         |
+| total_chunks    | 181                                            |
+| uploaded_chunks | 181                                            |
+| status          | completed                                      |
+| url             | /upload/files/e53bfbb50ce361d03aba3b945080ea89 |
 
 ### 分片统计
 
 ```sql
-SELECT 
+SELECT
   COUNT(*) as total_chunks,
   COUNT(DISTINCT chunk_hash) as unique_chunks,
   pg_size_pretty(SUM(chunk_size)::bigint) as total_storage
 FROM chunks;
 ```
 
-| 指标 | 值 |
-|------|-----|
-| 总分片数 | 181 |
-| 唯一分片数 | 181 |
+| 指标       | 值     |
+| ---------- | ------ |
+| 总分片数   | 181    |
+| 唯一分片数 | 181    |
 | 总存储空间 | 360 MB |
 
 ### 文件-分片关系
 
 ```sql
-SELECT COUNT(*) FROM file_chunks 
+SELECT COUNT(*) FROM file_chunks
 WHERE file_id = 'e53bfbb50ce361d03aba3b945080ea89';
 ```
 
@@ -176,27 +181,32 @@ storage/
 ## 核心特性验证
 
 ### ✅ 分片上传
+
 - 大文件被分割成 2MB 的小分片
 - 每个分片独立上传
 - 支持断点续传（通过 verify 接口）
 
 ### ✅ 去重存储
+
 - 使用 MD5 哈希识别分片
 - 相同内容的分片只存储一次
 - 通过引用计数管理分片生命周期
 
 ### ✅ 数据完整性
+
 - 上传前计算文件和分片哈希
 - 服务器验证每个分片的哈希
 - 下载后验证文件完整性
 - MD5 完全匹配 ✅
 
 ### ✅ 秒传功能
+
 - 上传前检查文件哈希
 - 如果文件已存在，直接返回 URL
 - 检查分片哈希，跳过已存在的分片
 
 ### ✅ 流式下载
+
 - 支持 Range 请求
 - 按需读取分片
 - 适合大文件和视频流
@@ -230,6 +240,7 @@ md5 test.mp4
 ✅ **完整流程验证成功！**
 
 ChunkFlow Upload SDK 成功实现了：
+
 1. 大文件分片上传
 2. 去重存储
 3. 秒传功能

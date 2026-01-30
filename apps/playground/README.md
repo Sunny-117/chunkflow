@@ -5,23 +5,27 @@ Interactive playground application demonstrating the capabilities of ChunkFlow U
 ## Features
 
 ### 1. Basic Upload
+
 - Simple file upload with automatic chunking
 - Progress tracking with speed and remaining time
 - Error handling and validation
 
 ### 2. Multi-File Upload
+
 - Upload multiple files simultaneously
 - Drag-and-drop support
 - Batch operations (pause all, resume all, cancel all)
 - Real-time statistics dashboard
 
 ### 3. Resume Upload (Breakpoint Resume)
+
 - Automatic progress persistence
 - Resume interrupted uploads
 - No need to re-upload completed chunks
 - Works across page refreshes
 
 ### 4. Instant Upload (秒传)
+
 - Content-based deduplication
 - Skip uploading duplicate files
 - Instant completion for known files
@@ -70,7 +74,7 @@ The playground connects to the upload server at `http://localhost:3001` by defau
 
 ```typescript
 const requestAdapter = new FetchRequestAdapter({
-  baseURL: 'http://localhost:3001', // Change this to your server URL
+  baseURL: "http://localhost:3001", // Change this to your server URL
 });
 ```
 
@@ -189,6 +193,7 @@ function MyComponent() {
 ### Server Connection Issues
 
 If you see connection errors, make sure:
+
 1. The upload server is running (`pnpm --filter @chunkflow/server-app dev`)
 2. The server is accessible at `http://localhost:3001`
 3. CORS is properly configured on the server
@@ -196,6 +201,7 @@ If you see connection errors, make sure:
 ### Upload Failures
 
 If uploads fail:
+
 1. Check the browser console for errors
 2. Check the server logs
 3. Verify the file size is within limits
@@ -204,6 +210,7 @@ If uploads fail:
 ### Performance Issues
 
 For better performance:
+
 1. Use a production build (`pnpm build`)
 2. Ensure the server has sufficient resources
 3. Check network bandwidth

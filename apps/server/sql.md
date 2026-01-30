@@ -1,6 +1,7 @@
 # 部分 SQL
+
 ```
-psql -h localhost -U olive -d chunkflow -c "                                                                  
+psql -h localhost -U olive -d chunkflow -c "
 SELECT
   COUNT(*) as file_chunk_relations
 FROM file_chunks
