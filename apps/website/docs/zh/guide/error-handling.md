@@ -9,9 +9,9 @@ ChunkFlow 中处理错误的综合指南。
 网络相关错误（超时、离线、服务器错误）。
 
 ```typescript
-task.on('error', ({ error }) => {
-  if (error.code === 'NETWORK_ERROR') {
-    console.error('网络错误:', error.message);
+task.on("error", ({ error }) => {
+  if (error.code === "NETWORK_ERROR") {
+    console.error("网络错误:", error.message);
   }
 });
 ```
@@ -21,7 +21,7 @@ task.on('error', ({ error }) => {
 Token 验证错误。
 
 ```typescript
-if (error.code === 'TOKEN_EXPIRED') {
+if (error.code === "TOKEN_EXPIRED") {
   // 刷新 token 并重试
 }
 ```
@@ -31,8 +31,8 @@ if (error.code === 'TOKEN_EXPIRED') {
 文件验证错误。
 
 ```typescript
-if (error.code === 'FILE_TOO_LARGE') {
-  alert('文件太大');
+if (error.code === "FILE_TOO_LARGE") {
+  alert("文件太大");
 }
 ```
 
@@ -42,8 +42,8 @@ if (error.code === 'FILE_TOO_LARGE') {
 
 ```typescript
 const task = manager.createTask(file, {
-  retryCount: 3,     // 最多重试 3 次
-  retryDelay: 1000,  // 基础延迟 1 秒
+  retryCount: 3, // 最多重试 3 次
+  retryDelay: 1000, // 基础延迟 1 秒
 });
 ```
 

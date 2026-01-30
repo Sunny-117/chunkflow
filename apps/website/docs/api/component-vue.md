@@ -8,11 +8,11 @@ File selection button.
 
 ```vue
 <script setup>
-import { UploadButton } from '@chunkflow/upload-component-vue';
+import { UploadButton } from "@chunkflow/upload-component-vue";
 </script>
 
 <template>
-  <UploadButton 
+  <UploadButton
     accept="image/*,video/*"
     :max-size="100 * 1024 * 1024"
     multiple
@@ -36,15 +36,11 @@ Progress bar component.
 
 ```vue
 <script setup>
-import { UploadProgress } from '@chunkflow/upload-component-vue';
+import { UploadProgress } from "@chunkflow/upload-component-vue";
 </script>
 
 <template>
-  <UploadProgress 
-    :task="task"
-    show-speed
-    show-remaining-time
-  />
+  <UploadProgress :task="task" show-speed show-remaining-time />
 </template>
 ```
 
@@ -60,7 +56,7 @@ Task list component.
 
 ```vue
 <script setup>
-import { UploadList } from '@chunkflow/upload-component-vue';
+import { UploadList } from "@chunkflow/upload-component-vue";
 </script>
 
 <template>
@@ -78,11 +74,11 @@ Drag and drop zone.
 
 ```vue
 <script setup>
-import { UploadDropzone } from '@chunkflow/upload-component-vue';
+import { UploadDropzone } from "@chunkflow/upload-component-vue";
 </script>
 
 <template>
-  <UploadDropzone 
+  <UploadDropzone
     accept="image/*"
     :max-size="50 * 1024 * 1024"
     @drop="(files) => console.log(files)"

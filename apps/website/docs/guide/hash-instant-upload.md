@@ -9,14 +9,14 @@ ChunkFlow uses content-based hashing to enable instant uploads through deduplica
 When a file is selected, ChunkFlow calculates its MD5 hash:
 
 ```typescript
-const file = new File(['content'], 'file.txt');
+const file = new File(["content"], "file.txt");
 const task = manager.createTask(file);
 
-task.on('hashProgress', ({ progress }) => {
+task.on("hashProgress", ({ progress }) => {
   console.log(`Hash calculation: ${progress}%`);
 });
 
-task.on('hashComplete', ({ hash }) => {
+task.on("hashComplete", ({ hash }) => {
   console.log(`File hash: ${hash}`);
 });
 
@@ -30,13 +30,13 @@ The hash is sent to the server to check if the file already exists:
 ```typescript
 // Server checks if file with this hash exists
 const response = await adapter.verifyHash({
-  fileHash: 'abc123...',
+  fileHash: "abc123...",
   uploadToken: token,
 });
 
 if (response.fileExists) {
   // File already exists - instant upload!
-  console.log('File URL:', response.fileUrl);
+  console.log("File URL:", response.fileUrl);
 }
 ```
 
@@ -66,17 +66,18 @@ When the entire file already exists:
 
 ```typescript
 // First user uploads file
-const user1File = new File(['content'], 'document.pdf');
+const user1File = new File(["content"], "document.pdf");
 await manager.createTask(user1File).start();
 // Takes time to upload
 
 // Second user uploads same file
-const user2File = new File(['content'], 'document.pdf');
+const user2File = new File(["content"], "document.pdf");
 await manager.createTask(user2File).start();
 // Completes instantly!
 ```
 
 **Benefits**:
+
 - Zero upload time
 - Saves bandwidth
 - Reduces server storage
@@ -96,6 +97,7 @@ await manager.createTask(fileB).start();
 ```
 
 **Benefits**:
+
 - Faster uploads
 - Chunk-level deduplication
 - Efficient storage
@@ -116,7 +118,7 @@ const task = manager.createTask(file, {
 ChunkFlow uses MD5 by default (fast and sufficient for deduplication):
 
 ```typescript
-import { calculateFileHash } from '@chunkflow/shared';
+import { calculateFileHash } from "@chunkflow/shared";
 
 const hash = await calculateFileHash(file);
 console.log(hash); // MD5 hash
@@ -165,12 +167,12 @@ const task = manager.createTask(file, {
 Inform users about hash calculation:
 
 ```typescript
-task.on('hashProgress', ({ progress }) => {
+task.on("hashProgress", ({ progress }) => {
   updateUI(`Preparing upload: ${progress}%`);
 });
 
-task.on('hashComplete', () => {
-  updateUI('Upload starting...');
+task.on("hashComplete", () => {
+  updateUI("Upload starting...");
 });
 ```
 
@@ -179,13 +181,13 @@ task.on('hashComplete', () => {
 Provide feedback for instant uploads:
 
 ```typescript
-task.on('success', ({ fileUrl }) => {
+task.on("success", ({ fileUrl }) => {
   const wasInstant = task.getProgress().uploadedBytes === 0;
-  
+
   if (wasInstant) {
-    showMessage('File already exists - instant upload!');
+    showMessage("File already exists - instant upload!");
   } else {
-    showMessage('Upload complete!');
+    showMessage("Upload complete!");
   }
 });
 ```

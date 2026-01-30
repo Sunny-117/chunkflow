@@ -5,27 +5,36 @@
 ## Nest.js 集成
 
 ```typescript
-import { Controller, Post, Get, Body, Param, UploadedFile, UseInterceptors, Res } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadService } from '@chunkflow/upload-server';
-import type { FastifyReply } from 'fastify';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Param,
+  UploadedFile,
+  UseInterceptors,
+  Res,
+} from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { UploadService } from "@chunkflow/upload-server";
+import type { FastifyReply } from "fastify";
 
-@Controller('upload')
+@Controller("upload")
 export class UploadController {
   constructor(private readonly uploadService: UploadService) {}
 
-  @Post('create')
+  @Post("create")
   async createFile(@Body() request: CreateFileRequest) {
     return this.uploadService.createFile(request);
   }
 
-  @Post('verify')
+  @Post("verify")
   async verifyHash(@Body() request: VerifyHashRequest) {
     return this.uploadService.verifyHash(request);
   }
 
-  @Post('chunk')
-  @UseInterceptors(FileInterceptor('chunk'))
+  @Post("chunk")
+  @UseInterceptors(FileInterceptor("chunk"))
   async uploadChunk(
     @UploadedFile() file: Express.Multer.File,
     @Body() body: { uploadToken: string; chunkIndex: string; chunkHash: string },
@@ -38,16 +47,13 @@ export class UploadController {
     });
   }
 
-  @Post('merge')
+  @Post("merge")
   async mergeFile(@Body() request: MergeFileRequest) {
     return this.uploadService.mergeFile(request);
   }
 
-  @Get('files/:fileId')
-  async getFile(
-    @Param('fileId') fileId: string,
-    @Res() res: FastifyReply,
-  ) {
+  @Get("files/:fileId")
+  async getFile(@Param("fileId") fileId: string, @Res() res: FastifyReply) {
     const stream = await this.uploadService.getFileStream(fileId);
     res.send(stream);
   }
@@ -57,29 +63,29 @@ export class UploadController {
 ## Express 集成
 
 ```typescript
-import express from 'express';
-import multer from 'multer';
-import { UploadService, LocalStorageAdapter, PostgreSQLAdapter } from '@chunkflow/upload-server';
+import express from "express";
+import multer from "multer";
+import { UploadService, LocalStorageAdapter, PostgreSQLAdapter } from "@chunkflow/upload-server";
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
-const storage = new LocalStorageAdapter('./storage');
+const storage = new LocalStorageAdapter("./storage");
 const database = new PostgreSQLAdapter({
-  host: 'localhost',
+  host: "localhost",
   port: 5432,
-  database: 'chunkflow',
-  user: 'postgres',
-  password: 'postgres',
+  database: "chunkflow",
+  user: "postgres",
+  password: "postgres",
 });
 
 const uploadService = new UploadService({
   storageAdapter: storage,
   database,
-  tokenSecret: 'your-secret-key',
+  tokenSecret: "your-secret-key",
 });
 
-app.post('/api/upload/create', express.json(), async (req, res) => {
+app.post("/api/upload/create", express.json(), async (req, res) => {
   try {
     const result = await uploadService.createFile(req.body);
     res.json(result);
@@ -88,7 +94,7 @@ app.post('/api/upload/create', express.json(), async (req, res) => {
   }
 });
 
-app.post('/api/upload/verify', express.json(), async (req, res) => {
+app.post("/api/upload/verify", express.json(), async (req, res) => {
   try {
     const result = await uploadService.verifyHash(req.body);
     res.json(result);
@@ -97,7 +103,7 @@ app.post('/api/upload/verify', express.json(), async (req, res) => {
   }
 });
 
-app.post('/api/upload/chunk', upload.single('chunk'), async (req, res) => {
+app.post("/api/upload/chunk", upload.single("chunk"), async (req, res) => {
   try {
     const result = await uploadService.uploadChunk({
       uploadToken: req.body.uploadToken,
@@ -111,7 +117,7 @@ app.post('/api/upload/chunk', upload.single('chunk'), async (req, res) => {
   }
 });
 
-app.post('/api/upload/merge', express.json(), async (req, res) => {
+app.post("/api/upload/merge", express.json(), async (req, res) => {
   try {
     const result = await uploadService.mergeFile(req.body);
     res.json(result);
@@ -120,25 +126,25 @@ app.post('/api/upload/merge', express.json(), async (req, res) => {
   }
 });
 
-app.get('/api/files/:fileId', async (req, res) => {
+app.get("/api/files/:fileId", async (req, res) => {
   try {
     const stream = await uploadService.getFileStream(req.params.fileId);
     stream.pipe(res);
   } catch (error) {
-    res.status(404).json({ error: '文件未找到' });
+    res.status(404).json({ error: "文件未找到" });
   }
 });
 
 app.listen(3000, () => {
-  console.log('服务器运行在 http://localhost:3000');
+  console.log("服务器运行在 http://localhost:3000");
 });
 ```
 
 ## 自定义存储适配器
 
 ```typescript
-import { StorageAdapter } from '@chunkflow/upload-server';
-import AWS from 'aws-sdk';
+import { StorageAdapter } from "@chunkflow/upload-server";
+import AWS from "aws-sdk";
 
 export class S3StorageAdapter implements StorageAdapter {
   private s3: AWS.S3;
@@ -150,27 +156,33 @@ export class S3StorageAdapter implements StorageAdapter {
   }
 
   async saveChunk(chunkHash: string, data: Buffer): Promise<void> {
-    await this.s3.putObject({
-      Bucket: this.bucket,
-      Key: `chunks/${chunkHash}`,
-      Body: data,
-    }).promise();
+    await this.s3
+      .putObject({
+        Bucket: this.bucket,
+        Key: `chunks/${chunkHash}`,
+        Body: data,
+      })
+      .promise();
   }
 
   async getChunk(chunkHash: string): Promise<Buffer> {
-    const result = await this.s3.getObject({
-      Bucket: this.bucket,
-      Key: `chunks/${chunkHash}`,
-    }).promise();
+    const result = await this.s3
+      .getObject({
+        Bucket: this.bucket,
+        Key: `chunks/${chunkHash}`,
+      })
+      .promise();
     return result.Body as Buffer;
   }
 
   async chunkExists(chunkHash: string): Promise<boolean> {
     try {
-      await this.s3.headObject({
-        Bucket: this.bucket,
-        Key: `chunks/${chunkHash}`,
-      }).promise();
+      await this.s3
+        .headObject({
+          Bucket: this.bucket,
+          Key: `chunks/${chunkHash}`,
+        })
+        .promise();
       return true;
     } catch {
       return false;
@@ -178,14 +190,16 @@ export class S3StorageAdapter implements StorageAdapter {
   }
 
   async chunksExist(chunkHashes: string[]): Promise<boolean[]> {
-    return Promise.all(chunkHashes.map(hash => this.chunkExists(hash)));
+    return Promise.all(chunkHashes.map((hash) => this.chunkExists(hash)));
   }
 
   async getChunkStream(chunkHash: string): Promise<ReadableStream> {
-    return this.s3.getObject({
-      Bucket: this.bucket,
-      Key: `chunks/${chunkHash}`,
-    }).createReadStream();
+    return this.s3
+      .getObject({
+        Bucket: this.bucket,
+        Key: `chunks/${chunkHash}`,
+      })
+      .createReadStream();
   }
 }
 ```

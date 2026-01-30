@@ -16,11 +16,11 @@ new UploadManager(options: UploadManagerOptions)
 
 ```typescript
 interface UploadManagerOptions {
-  requestAdapter: RequestAdapter;     // HTTP 适配器（必需）
-  maxConcurrentTasks?: number;        // 最大并行上传数（默认: 3）
-  defaultChunkSize?: number;          // 默认分片大小（默认: 1MB）
-  defaultConcurrency?: number;        // 默认分片并发数（默认: 3）
-  autoResumeUnfinished?: boolean;     // 初始化时自动恢复（默认: true）
+  requestAdapter: RequestAdapter; // HTTP 适配器（必需）
+  maxConcurrentTasks?: number; // 最大并行上传数（默认: 3）
+  defaultChunkSize?: number; // 默认分片大小（默认: 1MB）
+  defaultConcurrency?: number; // 默认分片并发数（默认: 3）
+  autoResumeUnfinished?: boolean; // 初始化时自动恢复（默认: true）
 }
 ```
 
@@ -43,17 +43,19 @@ manager.createTask(file: File, options?: Partial<UploadTaskOptions>): UploadTask
 ```
 
 **参数:**
+
 - `file`: 要上传的文件
 - `options`: 任务特定选项（可选）
 
 **返回:** UploadTask 实例
 
 **示例:**
+
 ```typescript
 const task = manager.createTask(file, {
-  chunkSize: 2 * 1024 * 1024,  // 2MB 分片
-  concurrency: 5,               // 5 个并行分片
-  retryCount: 3,                // 重试 3 次
+  chunkSize: 2 * 1024 * 1024, // 2MB 分片
+  concurrency: 5, // 5 个并行分片
+  retryCount: 3, // 重试 3 次
 });
 ```
 
@@ -190,7 +192,7 @@ interface Plugin {
 将上传事件记录到控制台。
 
 ```typescript
-import { LoggerPlugin } from '@chunkflow/core';
+import { LoggerPlugin } from "@chunkflow/core";
 
 manager.use(new LoggerPlugin());
 ```
@@ -200,7 +202,7 @@ manager.use(new LoggerPlugin());
 跟踪上传统计信息。
 
 ```typescript
-import { StatisticsPlugin } from '@chunkflow/core';
+import { StatisticsPlugin } from "@chunkflow/core";
 
 const stats = new StatisticsPlugin();
 manager.use(stats);

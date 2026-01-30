@@ -110,8 +110,8 @@ You can also use ChunkFlow via CDN for quick prototyping:
 
 ```html
 <script type="module">
-  import { UploadManager } from 'https://esm.sh/@chunkflow/core';
-  
+  import { UploadManager } from "https://esm.sh/@chunkflow/core";
+
   // Your code here
 </script>
 ```
@@ -138,7 +138,7 @@ If you're using a monorepo (pnpm workspace, npm workspaces, yarn workspaces, or 
 After installation, verify that ChunkFlow is installed correctly:
 
 ```typescript
-import { UploadManager } from '@chunkflow/core';
+import { UploadManager } from "@chunkflow/core";
 
 console.log(UploadManager); // Should output the class constructor
 ```
@@ -150,6 +150,7 @@ console.log(UploadManager); // Should output the class constructor
 If you encounter "Module not found" errors:
 
 1. Clear your package manager cache:
+
    ```bash
    pnpm store prune  # pnpm
    npm cache clean --force  # npm
@@ -167,6 +168,7 @@ If you encounter "Module not found" errors:
 If you encounter TypeScript errors:
 
 1. Ensure your `tsconfig.json` includes:
+
    ```json
    {
      "compilerOptions": {

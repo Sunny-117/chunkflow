@@ -9,7 +9,7 @@ ChunkFlow supports multiple storage backends through adapters.
 Store chunks on local file system.
 
 ```typescript
-const storage = new LocalStorageAdapter('./storage');
+const storage = new LocalStorageAdapter("./storage");
 ```
 
 ### OSSStorageAdapter
@@ -18,10 +18,10 @@ Store chunks on Alibaba Cloud OSS.
 
 ```typescript
 const storage = new OSSStorageAdapter({
-  region: 'oss-cn-hangzhou',
-  accessKeyId: 'your-key',
-  accessKeySecret: 'your-secret',
-  bucket: 'your-bucket',
+  region: "oss-cn-hangzhou",
+  accessKeyId: "your-key",
+  accessKeySecret: "your-secret",
+  bucket: "your-bucket",
 });
 ```
 

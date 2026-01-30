@@ -9,7 +9,7 @@ ChunkFlow 通过适配器支持多种存储后端。
 在本地文件系统上存储分片。
 
 ```typescript
-const storage = new LocalStorageAdapter('./storage');
+const storage = new LocalStorageAdapter("./storage");
 ```
 
 ### OSSStorageAdapter
@@ -18,10 +18,10 @@ const storage = new LocalStorageAdapter('./storage');
 
 ```typescript
 const storage = new OSSStorageAdapter({
-  region: 'oss-cn-hangzhou',
-  accessKeyId: 'your-key',
-  accessKeySecret: 'your-secret',
-  bucket: 'your-bucket',
+  region: "oss-cn-hangzhou",
+  accessKeyId: "your-key",
+  accessKeySecret: "your-secret",
+  bucket: "your-bucket",
 });
 ```
 

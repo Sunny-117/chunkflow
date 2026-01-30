@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths:
-      - 'apps/website/**'
-      - '.github/workflows/deploy-docs.yml'
+      - "apps/website/**"
+      - ".github/workflows/deploy-docs.yml"
   workflow_dispatch:
 
 permissions:
@@ -36,7 +36,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

@@ -5,21 +5,21 @@ ChunkFlow 中使用的通用工具和辅助函数。
 ## 事件系统
 
 ```typescript
-import { createEventBus } from '@chunkflow/shared';
+import { createEventBus } from "@chunkflow/shared";
 
 const eventBus = createEventBus();
 
-eventBus.on('event', (payload) => {
+eventBus.on("event", (payload) => {
   console.log(payload);
 });
 
-eventBus.emit('event', { data: 'value' });
+eventBus.emit("event", { data: "value" });
 ```
 
 ## 并发控制
 
 ```typescript
-import { ConcurrencyController } from '@chunkflow/shared';
+import { ConcurrencyController } from "@chunkflow/shared";
 
 const controller = new ConcurrencyController({ limit: 3 });
 
@@ -33,7 +33,7 @@ await controller.run(async () => {
 ### sliceFile()
 
 ```typescript
-import { sliceFile } from '@chunkflow/shared';
+import { sliceFile } from "@chunkflow/shared";
 
 const chunk = sliceFile(file, 0, 1024 * 1024); // 第一个 1MB
 ```
@@ -41,7 +41,7 @@ const chunk = sliceFile(file, 0, 1024 * 1024); // 第一个 1MB
 ### calculateFileHash()
 
 ```typescript
-import { calculateFileHash } from '@chunkflow/shared';
+import { calculateFileHash } from "@chunkflow/shared";
 
 const hash = await calculateFileHash(file, (progress) => {
   console.log(`进度: ${progress}%`);
@@ -51,7 +51,7 @@ const hash = await calculateFileHash(file, (progress) => {
 ### calculateChunkHash()
 
 ```typescript
-import { calculateChunkHash } from '@chunkflow/shared';
+import { calculateChunkHash } from "@chunkflow/shared";
 
 const hash = await calculateChunkHash(chunk);
 ```
@@ -59,7 +59,7 @@ const hash = await calculateChunkHash(chunk);
 ### formatFileSize()
 
 ```typescript
-import { formatFileSize } from '@chunkflow/shared';
+import { formatFileSize } from "@chunkflow/shared";
 
 console.log(formatFileSize(1024)); // "1.00 KB"
 console.log(formatFileSize(1024 * 1024)); // "1.00 MB"
@@ -68,7 +68,7 @@ console.log(formatFileSize(1024 * 1024)); // "1.00 MB"
 ## IndexedDB 存储
 
 ```typescript
-import { UploadStorage } from '@chunkflow/shared';
+import { UploadStorage } from "@chunkflow/shared";
 
 const storage = new UploadStorage();
 await storage.init();

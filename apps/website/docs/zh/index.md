@@ -64,12 +64,12 @@ yarn add @chunkflow/core @chunkflow/upload-client-react
 ## React 示例
 
 ```tsx
-import { UploadProvider } from '@chunkflow/upload-client-react';
-import { UploadButton, UploadList } from '@chunkflow/upload-component-react';
-import { createFetchAdapter } from '@chunkflow/core';
+import { UploadProvider } from "@chunkflow/upload-client-react";
+import { UploadButton, UploadList } from "@chunkflow/upload-component-react";
+import { createFetchAdapter } from "@chunkflow/core";
 
 const adapter = createFetchAdapter({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: "http://localhost:3000/api",
 });
 
 function App() {
@@ -88,13 +88,13 @@ function App() {
 
 ```vue
 <script setup>
-import { createApp } from 'vue';
-import { UploadPlugin } from '@chunkflow/upload-client-vue';
-import { UploadButton, UploadList } from '@chunkflow/upload-component-vue';
-import { createFetchAdapter } from '@chunkflow/core';
+import { createApp } from "vue";
+import { UploadPlugin } from "@chunkflow/upload-client-vue";
+import { UploadButton, UploadList } from "@chunkflow/upload-component-vue";
+import { createFetchAdapter } from "@chunkflow/core";
 
 const adapter = createFetchAdapter({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: "http://localhost:3000/api",
 });
 
 const app = createApp(App);
@@ -102,9 +102,7 @@ app.use(UploadPlugin, { requestAdapter: adapter });
 </script>
 
 <template>
-  <UploadButton accept="image/*,video/*" :max-size="100 * 1024 * 1024">
-    选择文件
-  </UploadButton>
+  <UploadButton accept="image/*,video/*" :max-size="100 * 1024 * 1024"> 选择文件 </UploadButton>
   <UploadList />
 </template>
 ```

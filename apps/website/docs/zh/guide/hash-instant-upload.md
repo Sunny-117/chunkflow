@@ -9,14 +9,14 @@ ChunkFlow 使用基于内容的哈希来实现通过去重的秒传功能。
 当选择文件时，ChunkFlow 计算其 MD5 哈希：
 
 ```typescript
-const file = new File(['content'], 'file.txt');
+const file = new File(["content"], "file.txt");
 const task = manager.createTask(file);
 
-task.on('hashProgress', ({ progress }) => {
+task.on("hashProgress", ({ progress }) => {
   console.log(`哈希计算: ${progress}%`);
 });
 
-task.on('hashComplete', ({ hash }) => {
+task.on("hashComplete", ({ hash }) => {
   console.log(`文件哈希: ${hash}`);
 });
 
@@ -30,13 +30,13 @@ await task.start();
 ```typescript
 // 服务器检查是否存在具有此哈希的文件
 const response = await adapter.verifyHash({
-  fileHash: 'abc123...',
+  fileHash: "abc123...",
   uploadToken: token,
 });
 
 if (response.fileExists) {
   // 文件已存在 - 秒传！
-  console.log('文件 URL:', response.fileUrl);
+  console.log("文件 URL:", response.fileUrl);
 }
 ```
 
@@ -66,17 +66,18 @@ if (response.fileExists) {
 
 ```typescript
 // 第一个用户上传文件
-const user1File = new File(['content'], 'document.pdf');
+const user1File = new File(["content"], "document.pdf");
 await manager.createTask(user1File).start();
 // 需要时间上传
 
 // 第二个用户上传相同文件
-const user2File = new File(['content'], 'document.pdf');
+const user2File = new File(["content"], "document.pdf");
 await manager.createTask(user2File).start();
 // 立即完成！
 ```
 
 **优势**：
+
 - 零上传时间
 - 节省带宽
 - 减少服务器存储
@@ -96,6 +97,7 @@ await manager.createTask(fileB).start();
 ```
 
 **优势**：
+
 - 更快的上传
 - 分片级去重
 - 高效存储
@@ -116,7 +118,7 @@ const task = manager.createTask(file, {
 ChunkFlow 默认使用 MD5（快速且足以用于去重）：
 
 ```typescript
-import { calculateFileHash } from '@chunkflow/shared';
+import { calculateFileHash } from "@chunkflow/shared";
 
 const hash = await calculateFileHash(file);
 console.log(hash); // MD5 哈希
@@ -165,12 +167,12 @@ const task = manager.createTask(file, {
 告知用户哈希计算进度：
 
 ```typescript
-task.on('hashProgress', ({ progress }) => {
+task.on("hashProgress", ({ progress }) => {
   updateUI(`准备上传: ${progress}%`);
 });
 
-task.on('hashComplete', () => {
-  updateUI('开始上传...');
+task.on("hashComplete", () => {
+  updateUI("开始上传...");
 });
 ```
 
@@ -179,13 +181,13 @@ task.on('hashComplete', () => {
 为秒传提供反馈：
 
 ```typescript
-task.on('success', ({ fileUrl }) => {
+task.on("success", ({ fileUrl }) => {
   const wasInstant = task.getProgress().uploadedBytes === 0;
-  
+
   if (wasInstant) {
-    showMessage('文件已存在 - 秒传！');
+    showMessage("文件已存在 - 秒传！");
   } else {
-    showMessage('上传完成！');
+    showMessage("上传完成！");
   }
 });
 ```

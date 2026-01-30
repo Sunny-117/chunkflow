@@ -14,10 +14,10 @@ pnpm add @chunkflow/core @chunkflow/upload-client-react @chunkflow/upload-compon
 
 ```typescript
 // src/lib/upload.ts
-import { createFetchAdapter } from '@chunkflow/core';
+import { createFetchAdapter } from "@chunkflow/core";
 
 export const uploadAdapter = createFetchAdapter({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api",
 });
 ```
 
@@ -25,9 +25,9 @@ export const uploadAdapter = createFetchAdapter({
 
 ```tsx
 // src/App.tsx
-import { UploadProvider } from '@chunkflow/upload-client-react';
-import { uploadAdapter } from './lib/upload';
-import { UploadPage } from './pages/UploadPage';
+import { UploadProvider } from "@chunkflow/upload-client-react";
+import { uploadAdapter } from "./lib/upload";
+import { UploadPage } from "./pages/UploadPage";
 
 export default function App() {
   return (
@@ -42,13 +42,13 @@ export default function App() {
 
 ```tsx
 // src/pages/UploadPage.tsx
-import { UploadButton, UploadList } from '@chunkflow/upload-component-react';
+import { UploadButton, UploadList } from "@chunkflow/upload-component-react";
 
 export function UploadPage() {
   return (
     <div className="container">
       <h1>Upload Files</h1>
-      <UploadButton 
+      <UploadButton
         accept="image/*,video/*,application/pdf"
         maxSize={500 * 1024 * 1024} // 500MB
         multiple
@@ -62,6 +62,7 @@ export function UploadPage() {
 ```
 
 That's it! You now have a fully functional upload interface with:
+
 - ✅ Chunked upload for large files
 - ✅ Resumable upload
 - ✅ Instant upload (deduplication)
@@ -80,18 +81,18 @@ pnpm add @chunkflow/core @chunkflow/upload-client-vue @chunkflow/upload-componen
 
 ```typescript
 // src/main.ts
-import { createApp } from 'vue';
-import { UploadPlugin } from '@chunkflow/upload-client-vue';
-import { createFetchAdapter } from '@chunkflow/core';
-import App from './App.vue';
+import { createApp } from "vue";
+import { UploadPlugin } from "@chunkflow/upload-client-vue";
+import { createFetchAdapter } from "@chunkflow/core";
+import App from "./App.vue";
 
 const adapter = createFetchAdapter({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api",
 });
 
 const app = createApp(App);
 app.use(UploadPlugin, { requestAdapter: adapter });
-app.mount('#app');
+app.mount("#app");
 ```
 
 ### Step 3: Use Components
@@ -99,17 +100,13 @@ app.mount('#app');
 ```vue
 <!-- src/pages/UploadPage.vue -->
 <script setup>
-import { UploadButton, UploadList } from '@chunkflow/upload-component-vue';
+import { UploadButton, UploadList } from "@chunkflow/upload-component-vue";
 </script>
 
 <template>
   <div class="container">
     <h1>Upload Files</h1>
-    <UploadButton 
-      accept="image/*,video/*,application/pdf"
-      :max-size="500 * 1024 * 1024"
-      multiple
-    >
+    <UploadButton accept="image/*,video/*,application/pdf" :max-size="500 * 1024 * 1024" multiple>
       📁 Select Files
     </UploadButton>
     <UploadList />
@@ -128,10 +125,10 @@ pnpm add @chunkflow/core
 ### Step 2: Create Manager
 
 ```typescript
-import { UploadManager, createFetchAdapter } from '@chunkflow/core';
+import { UploadManager, createFetchAdapter } from "@chunkflow/core";
 
 const adapter = createFetchAdapter({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: "http://localhost:3000/api",
 });
 
 const manager = new UploadManager({
@@ -146,27 +143,27 @@ await manager.init();
 ### Step 3: Handle File Upload
 
 ```typescript
-const fileInput = document.querySelector('#file-input');
-const progressBar = document.querySelector('#progress');
-const statusText = document.querySelector('#status');
+const fileInput = document.querySelector("#file-input");
+const progressBar = document.querySelector("#progress");
+const statusText = document.querySelector("#status");
 
-fileInput.addEventListener('change', async (e) => {
+fileInput.addEventListener("change", async (e) => {
   const file = e.target.files[0];
   if (!file) return;
 
   const task = manager.createTask(file);
 
-  task.on('progress', ({ progress, speed }) => {
+  task.on("progress", ({ progress, speed }) => {
     progressBar.value = progress.percentage;
     statusText.textContent = `${progress.percentage.toFixed(1)}% - ${formatSpeed(speed)}`;
   });
 
-  task.on('success', ({ fileUrl }) => {
-    statusText.textContent = 'Upload complete!';
-    console.log('File URL:', fileUrl);
+  task.on("success", ({ fileUrl }) => {
+    statusText.textContent = "Upload complete!";
+    console.log("File URL:", fileUrl);
   });
 
-  task.on('error', ({ error }) => {
+  task.on("error", ({ error }) => {
     statusText.textContent = `Error: ${error.message}`;
   });
 
@@ -174,7 +171,7 @@ fileInput.addEventListener('change', async (e) => {
 });
 
 function formatSpeed(bytesPerSecond) {
-  const units = ['B/s', 'KB/s', 'MB/s', 'GB/s'];
+  const units = ["B/s", "KB/s", "MB/s", "GB/s"];
   let speed = bytesPerSecond;
   let unitIndex = 0;
 
@@ -192,17 +189,17 @@ function formatSpeed(bytesPerSecond) {
 ```html
 <!DOCTYPE html>
 <html>
-<head>
-  <title>ChunkFlow Upload</title>
-</head>
-<body>
-  <h1>Upload File</h1>
-  <input type="file" id="file-input" />
-  <progress id="progress" value="0" max="100"></progress>
-  <p id="status">Select a file to upload</p>
-  
-  <script type="module" src="/src/main.ts"></script>
-</body>
+  <head>
+    <title>ChunkFlow Upload</title>
+  </head>
+  <body>
+    <h1>Upload File</h1>
+    <input type="file" id="file-input" />
+    <progress id="progress" value="0" max="100"></progress>
+    <p id="status">Select a file to upload</p>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>
 ```
 
@@ -225,21 +222,21 @@ The server will be available at `http://localhost:3000`.
 ### Option 2: Implement Your Own
 
 ```typescript
-import { UploadService, LocalStorageAdapter, PostgreSQLAdapter } from '@chunkflow/upload-server';
+import { UploadService, LocalStorageAdapter, PostgreSQLAdapter } from "@chunkflow/upload-server";
 
-const storage = new LocalStorageAdapter('./storage');
+const storage = new LocalStorageAdapter("./storage");
 const database = new PostgreSQLAdapter({
-  host: 'localhost',
+  host: "localhost",
   port: 5432,
-  database: 'chunkflow',
-  user: 'postgres',
-  password: 'postgres',
+  database: "chunkflow",
+  user: "postgres",
+  password: "postgres",
 });
 
 const uploadService = new UploadService({
   storageAdapter: storage,
   database,
-  tokenSecret: 'your-secret-key',
+  tokenSecret: "your-secret-key",
   defaultChunkSize: 1024 * 1024,
 });
 
@@ -255,10 +252,10 @@ See the [Server Configuration](/guide/server-config) guide for detailed instruct
 ```typescript
 const manager = new UploadManager({
   requestAdapter: adapter,
-  maxConcurrentTasks: 3,        // Max parallel uploads
+  maxConcurrentTasks: 3, // Max parallel uploads
   defaultChunkSize: 1024 * 1024, // 1MB chunks
-  defaultConcurrency: 3,         // 3 chunks at a time
-  autoResumeUnfinished: true,    // Auto-resume on page load
+  defaultConcurrency: 3, // 3 chunks at a time
+  autoResumeUnfinished: true, // Auto-resume on page load
 });
 ```
 
@@ -266,11 +263,11 @@ const manager = new UploadManager({
 
 ```typescript
 const task = manager.createTask(file, {
-  chunkSize: 2 * 1024 * 1024,  // 2MB chunks
-  concurrency: 5,               // 5 chunks at a time
-  retryCount: 3,                // Retry 3 times on failure
-  retryDelay: 1000,             // 1 second between retries
-  autoStart: true,              // Start immediately
+  chunkSize: 2 * 1024 * 1024, // 2MB chunks
+  concurrency: 5, // 5 chunks at a time
+  retryCount: 3, // Retry 3 times on failure
+  retryDelay: 1000, // 1 second between retries
+  autoStart: true, // Start immediately
 });
 ```
 
@@ -281,7 +278,7 @@ const task = manager.createTask(file, {
 Upload a file < 5MB to test direct upload:
 
 ```typescript
-const smallFile = new File(['Hello World'], 'test.txt', { type: 'text/plain' });
+const smallFile = new File(["Hello World"], "test.txt", { type: "text/plain" });
 const task = manager.createTask(smallFile);
 await task.start();
 ```
@@ -292,7 +289,7 @@ Upload a file ≥ 5MB to test chunked upload:
 
 ```typescript
 // Create a 10MB test file
-const largeFile = new File([new ArrayBuffer(10 * 1024 * 1024)], 'large.bin');
+const largeFile = new File([new ArrayBuffer(10 * 1024 * 1024)], "large.bin");
 const task = manager.createTask(largeFile);
 await task.start();
 ```
@@ -315,7 +312,7 @@ setTimeout(() => task.resume(), 5000);
 Upload the same file twice to test deduplication:
 
 ```typescript
-const file = new File(['Same content'], 'test.txt');
+const file = new File(["Same content"], "test.txt");
 
 // First upload
 const task1 = manager.createTask(file);
@@ -334,14 +331,16 @@ If you see CORS errors, configure your server:
 
 ```typescript
 // Express
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  }),
+);
 
 // Fastify
 app.register(fastifyCors, {
-  origin: 'http://localhost:5173',
+  origin: "http://localhost:5173",
   credentials: true,
 });
 ```

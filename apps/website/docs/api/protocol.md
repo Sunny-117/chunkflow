@@ -10,11 +10,11 @@ Information about a file to be uploaded.
 
 ```typescript
 interface FileInfo {
-  name: string;          // File name
-  size: number;          // File size in bytes
-  type: string;          // MIME type
-  hash?: string;         // File hash (MD5)
-  lastModified: number;  // Last modified timestamp
+  name: string; // File name
+  size: number; // File size in bytes
+  type: string; // MIME type
+  hash?: string; // File hash (MD5)
+  lastModified: number; // Last modified timestamp
 }
 ```
 
@@ -24,11 +24,11 @@ Information about a file chunk.
 
 ```typescript
 interface ChunkInfo {
-  index: number;   // Chunk index (0-based)
-  hash: string;    // Chunk hash (MD5)
-  size: number;    // Chunk size in bytes
-  start: number;   // Start byte position
-  end: number;     // End byte position
+  index: number; // Chunk index (0-based)
+  hash: string; // Chunk hash (MD5)
+  size: number; // Chunk size in bytes
+  start: number; // Start byte position
+  end: number; // End byte position
 }
 ```
 
@@ -38,10 +38,10 @@ Token for authorizing upload operations.
 
 ```typescript
 interface UploadToken {
-  token: string;      // JWT or similar token
-  fileId: string;     // Unique file identifier
-  chunkSize: number;  // Negotiated chunk size
-  expiresAt: number;  // Token expiration timestamp
+  token: string; // JWT or similar token
+  fileId: string; // Unique file identifier
+  chunkSize: number; // Negotiated chunk size
+  expiresAt: number; // Token expiration timestamp
 }
 ```
 
@@ -51,12 +51,12 @@ Enum representing upload task status.
 
 ```typescript
 enum UploadStatus {
-  IDLE = "idle",           // Not started
-  HASHING = "hashing",     // Calculating hash
+  IDLE = "idle", // Not started
+  HASHING = "hashing", // Calculating hash
   UPLOADING = "uploading", // Uploading chunks
-  PAUSED = "paused",       // Paused by user
-  SUCCESS = "success",     // Upload complete
-  ERROR = "error",         // Upload failed
+  PAUSED = "paused", // Paused by user
+  SUCCESS = "success", // Upload complete
+  ERROR = "error", // Upload failed
   CANCELLED = "cancelled", // Cancelled by user
 }
 ```
@@ -71,10 +71,10 @@ Initialize a new upload session.
 
 ```typescript
 interface CreateFileRequest {
-  fileName: string;              // File name
-  fileSize: number;              // File size in bytes
-  fileType: string;              // MIME type
-  preferredChunkSize?: number;   // Preferred chunk size (optional)
+  fileName: string; // File name
+  fileSize: number; // File size in bytes
+  fileType: string; // MIME type
+  preferredChunkSize?: number; // Preferred chunk size (optional)
 }
 ```
 
@@ -82,8 +82,8 @@ interface CreateFileRequest {
 
 ```typescript
 interface CreateFileResponse {
-  uploadToken: UploadToken;      // Upload authorization token
-  negotiatedChunkSize: number;   // Server-negotiated chunk size
+  uploadToken: UploadToken; // Upload authorization token
+  negotiatedChunkSize: number; // Server-negotiated chunk size
 }
 ```
 
@@ -91,9 +91,9 @@ interface CreateFileResponse {
 
 ```typescript
 const response = await adapter.createFile({
-  fileName: 'video.mp4',
+  fileName: "video.mp4",
   fileSize: 100 * 1024 * 1024, // 100MB
-  fileType: 'video/mp4',
+  fileType: "video/mp4",
   preferredChunkSize: 2 * 1024 * 1024, // 2MB
 });
 
@@ -109,9 +109,9 @@ Check if file or chunks already exist (for instant upload).
 
 ```typescript
 interface VerifyHashRequest {
-  fileHash?: string;       // File hash (for full instant upload)
-  chunkHashes?: string[];  // Chunk hashes (for partial instant upload)
-  uploadToken: string;     // Upload token
+  fileHash?: string; // File hash (for full instant upload)
+  chunkHashes?: string[]; // Chunk hashes (for partial instant upload)
+  uploadToken: string; // Upload token
 }
 ```
 
@@ -119,10 +119,10 @@ interface VerifyHashRequest {
 
 ```typescript
 interface VerifyHashResponse {
-  fileExists: boolean;      // Whether file already exists
-  fileUrl?: string;         // File URL (if exists)
+  fileExists: boolean; // Whether file already exists
+  fileUrl?: string; // File URL (if exists)
   existingChunks: number[]; // Indices of existing chunks
-  missingChunks: number[];  // Indices of missing chunks
+  missingChunks: number[]; // Indices of missing chunks
 }
 ```
 
@@ -131,14 +131,14 @@ interface VerifyHashResponse {
 ```typescript
 // Check if file exists
 const response = await adapter.verifyHash({
-  fileHash: 'abc123...',
+  fileHash: "abc123...",
   uploadToken: token,
 });
 
 if (response.fileExists) {
-  console.log('File already exists:', response.fileUrl);
+  console.log("File already exists:", response.fileUrl);
 } else {
-  console.log('Need to upload chunks:', response.missingChunks);
+  console.log("Need to upload chunks:", response.missingChunks);
 }
 ```
 
@@ -150,9 +150,9 @@ Upload a single chunk.
 
 ```typescript
 interface UploadChunkRequest {
-  uploadToken: string;  // Upload token
-  chunkIndex: number;   // Chunk index
-  chunkHash: string;    // Chunk hash
+  uploadToken: string; // Upload token
+  chunkIndex: number; // Chunk index
+  chunkHash: string; // Chunk hash
   chunk: Blob | Buffer; // Chunk data
 }
 ```
@@ -161,8 +161,8 @@ interface UploadChunkRequest {
 
 ```typescript
 interface UploadChunkResponse {
-  success: boolean;   // Whether upload succeeded
-  chunkHash: string;  // Confirmed chunk hash
+  success: boolean; // Whether upload succeeded
+  chunkHash: string; // Confirmed chunk hash
 }
 ```
 
@@ -179,7 +179,7 @@ const response = await adapter.uploadChunk({
   chunk,
 });
 
-console.log('Chunk uploaded:', response.success);
+console.log("Chunk uploaded:", response.success);
 ```
 
 ### Merge File
@@ -190,9 +190,9 @@ Complete the upload and merge chunks logically.
 
 ```typescript
 interface MergeFileRequest {
-  uploadToken: string;     // Upload token
-  fileHash: string;        // File hash
-  chunkHashes: string[];   // All chunk hashes in order
+  uploadToken: string; // Upload token
+  fileHash: string; // File hash
+  chunkHashes: string[]; // All chunk hashes in order
 }
 ```
 
@@ -200,9 +200,9 @@ interface MergeFileRequest {
 
 ```typescript
 interface MergeFileResponse {
-  success: boolean;  // Whether merge succeeded
-  fileUrl: string;   // File access URL
-  fileId: string;    // File identifier
+  success: boolean; // Whether merge succeeded
+  fileUrl: string; // File access URL
+  fileId: string; // File identifier
 }
 ```
 
@@ -211,11 +211,11 @@ interface MergeFileResponse {
 ```typescript
 const response = await adapter.mergeFile({
   uploadToken: token,
-  fileHash: 'abc123...',
-  chunkHashes: ['chunk1...', 'chunk2...', 'chunk3...'],
+  fileHash: "abc123...",
+  chunkHashes: ["chunk1...", "chunk2...", "chunk3..."],
 });
 
-console.log('File URL:', response.fileUrl);
+console.log("File URL:", response.fileUrl);
 ```
 
 ## Request Adapter Interface
@@ -234,15 +234,15 @@ interface RequestAdapter {
 ### Creating a Custom Adapter
 
 ```typescript
-import { RequestAdapter } from '@chunkflow/protocol';
+import { RequestAdapter } from "@chunkflow/protocol";
 
 class CustomAdapter implements RequestAdapter {
   constructor(private baseURL: string) {}
 
   async createFile(request: CreateFileRequest): Promise<CreateFileResponse> {
     const response = await fetch(`${this.baseURL}/upload/create`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(request),
     });
     return response.json();
@@ -250,8 +250,8 @@ class CustomAdapter implements RequestAdapter {
 
   async verifyHash(request: VerifyHashRequest): Promise<VerifyHashResponse> {
     const response = await fetch(`${this.baseURL}/upload/verify`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(request),
     });
     return response.json();
@@ -259,13 +259,13 @@ class CustomAdapter implements RequestAdapter {
 
   async uploadChunk(request: UploadChunkRequest): Promise<UploadChunkResponse> {
     const formData = new FormData();
-    formData.append('uploadToken', request.uploadToken);
-    formData.append('chunkIndex', request.chunkIndex.toString());
-    formData.append('chunkHash', request.chunkHash);
-    formData.append('chunk', request.chunk);
+    formData.append("uploadToken", request.uploadToken);
+    formData.append("chunkIndex", request.chunkIndex.toString());
+    formData.append("chunkHash", request.chunkHash);
+    formData.append("chunk", request.chunk);
 
     const response = await fetch(`${this.baseURL}/upload/chunk`, {
-      method: 'POST',
+      method: "POST",
       body: formData,
     });
     return response.json();
@@ -273,8 +273,8 @@ class CustomAdapter implements RequestAdapter {
 
   async mergeFile(request: MergeFileRequest): Promise<MergeFileResponse> {
     const response = await fetch(`${this.baseURL}/upload/merge`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(request),
     });
     return response.json();
@@ -293,24 +293,24 @@ class UploadError extends Error {
   constructor(
     message: string,
     public code: string,
-    public statusCode?: number
+    public statusCode?: number,
   ) {
     super(message);
-    this.name = 'UploadError';
+    this.name = "UploadError";
   }
 }
 ```
 
 ### Common Error Codes
 
-| Code | Description |
-|------|-------------|
-| `TOKEN_INVALID` | Upload token is invalid |
-| `TOKEN_EXPIRED` | Upload token has expired |
-| `FILE_TOO_LARGE` | File exceeds maximum size |
-| `CHUNK_HASH_MISMATCH` | Chunk hash doesn't match |
-| `NETWORK_ERROR` | Network request failed |
-| `SERVER_ERROR` | Server returned an error |
+| Code                  | Description               |
+| --------------------- | ------------------------- |
+| `TOKEN_INVALID`       | Upload token is invalid   |
+| `TOKEN_EXPIRED`       | Upload token has expired  |
+| `FILE_TOO_LARGE`      | File exceeds maximum size |
+| `CHUNK_HASH_MISMATCH` | Chunk hash doesn't match  |
+| `NETWORK_ERROR`       | Network request failed    |
+| `SERVER_ERROR`        | Server returned an error  |
 
 ## Type Guards
 
@@ -322,7 +322,7 @@ function isUploadError(error: unknown): error is UploadError {
 }
 
 function isNetworkError(error: unknown): boolean {
-  return isUploadError(error) && error.code === 'NETWORK_ERROR';
+  return isUploadError(error) && error.code === "NETWORK_ERROR";
 }
 ```
 

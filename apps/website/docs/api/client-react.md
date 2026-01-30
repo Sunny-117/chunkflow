@@ -7,7 +7,7 @@ React Hooks and Context for ChunkFlow integration.
 Context provider for upload functionality.
 
 ```tsx
-import { UploadProvider } from '@chunkflow/upload-client-react';
+import { UploadProvider } from "@chunkflow/upload-client-react";
 
 function App() {
   return (
@@ -23,7 +23,7 @@ function App() {
 Hook for single file upload.
 
 ```tsx
-import { useUpload } from '@chunkflow/upload-client-react';
+import { useUpload } from "@chunkflow/upload-client-react";
 
 function UploadComponent() {
   const { upload, status, progress, pause, resume, cancel } = useUpload({
@@ -46,21 +46,17 @@ function UploadComponent() {
 Hook for multiple file uploads.
 
 ```tsx
-import { useUploadList } from '@chunkflow/upload-client-react';
+import { useUploadList } from "@chunkflow/upload-client-react";
 
 function UploadListComponent() {
   const { tasks, uploadFiles, pauseAll, resumeAll, cancelAll } = useUploadList();
 
   return (
     <div>
-      <input 
-        type="file" 
-        multiple 
-        onChange={(e) => uploadFiles(Array.from(e.target.files))} 
-      />
+      <input type="file" multiple onChange={(e) => uploadFiles(Array.from(e.target.files))} />
       <button onClick={pauseAll}>Pause All</button>
       <button onClick={resumeAll}>Resume All</button>
-      {tasks.map(task => (
+      {tasks.map((task) => (
         <div key={task.id}>{task.file.name}</div>
       ))}
     </div>
@@ -73,11 +69,11 @@ function UploadListComponent() {
 Hook to access the upload manager.
 
 ```tsx
-import { useUploadManager } from '@chunkflow/upload-client-react';
+import { useUploadManager } from "@chunkflow/upload-client-react";
 
 function Component() {
   const manager = useUploadManager();
-  
+
   // Use manager directly
   const task = manager.createTask(file);
 }

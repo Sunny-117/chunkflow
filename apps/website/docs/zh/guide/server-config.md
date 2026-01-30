@@ -17,21 +17,21 @@ pnpm run start:dev
 ## 自定义实现
 
 ```typescript
-import { UploadService, LocalStorageAdapter, PostgreSQLAdapter } from '@chunkflow/upload-server';
+import { UploadService, LocalStorageAdapter, PostgreSQLAdapter } from "@chunkflow/upload-server";
 
-const storage = new LocalStorageAdapter('./storage');
+const storage = new LocalStorageAdapter("./storage");
 const database = new PostgreSQLAdapter({
-  host: 'localhost',
+  host: "localhost",
   port: 5432,
-  database: 'chunkflow',
-  user: 'postgres',
-  password: 'postgres',
+  database: "chunkflow",
+  user: "postgres",
+  password: "postgres",
 });
 
 const uploadService = new UploadService({
   storageAdapter: storage,
   database,
-  tokenSecret: 'your-secret-key',
+  tokenSecret: "your-secret-key",
   defaultChunkSize: 1024 * 1024,
 });
 ```
@@ -41,17 +41,17 @@ const uploadService = new UploadService({
 ### 本地文件系统
 
 ```typescript
-const storage = new LocalStorageAdapter('./storage');
+const storage = new LocalStorageAdapter("./storage");
 ```
 
 ### OSS（阿里云）
 
 ```typescript
 const storage = new OSSStorageAdapter({
-  region: 'oss-cn-hangzhou',
-  accessKeyId: 'your-key',
-  accessKeySecret: 'your-secret',
-  bucket: 'your-bucket',
+  region: "oss-cn-hangzhou",
+  accessKeyId: "your-key",
+  accessKeySecret: "your-secret",
+  bucket: "your-bucket",
 });
 ```
 

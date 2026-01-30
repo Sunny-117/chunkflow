@@ -110,8 +110,8 @@ ChunkFlow 使用以下浏览器 API：
 
 ```html
 <script type="module">
-  import { UploadManager } from 'https://esm.sh/@chunkflow/core';
-  
+  import { UploadManager } from "https://esm.sh/@chunkflow/core";
+
   // 你的代码
 </script>
 ```
@@ -125,7 +125,7 @@ ChunkFlow 使用以下浏览器 API：
 安装后，验证 ChunkFlow 是否正确安装：
 
 ```typescript
-import { UploadManager } from '@chunkflow/core';
+import { UploadManager } from "@chunkflow/core";
 
 console.log(UploadManager); // 应该输出类构造函数
 ```

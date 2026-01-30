@@ -73,6 +73,7 @@ ChunkFlow is built with a layered architecture where each layer has a specific r
 **Purpose**: Define communication contracts
 
 **Responsibilities**:
+
 - TypeScript type definitions
 - API request/response interfaces
 - Error types
@@ -83,6 +84,7 @@ ChunkFlow is built with a layered architecture where each layer has a specific r
 **Used By**: All other layers
 
 **Key Files**:
+
 - `types.ts` - Core type definitions
 - `interfaces.ts` - API interfaces
 - `constants.ts` - Constants
@@ -92,6 +94,7 @@ ChunkFlow is built with a layered architecture where each layer has a specific r
 **Purpose**: Provide common utilities
 
 **Responsibilities**:
+
 - Event system (using mitt)
 - Concurrency control (using p-limit)
 - File utilities (slicing, hashing)
@@ -103,6 +106,7 @@ ChunkFlow is built with a layered architecture where each layer has a specific r
 **Used By**: Core, Client, Component layers
 
 **Key Files**:
+
 - `events.ts` - Event bus
 - `concurrency.ts` - Concurrency controller
 - `file-utils.ts` - File operations
@@ -113,6 +117,7 @@ ChunkFlow is built with a layered architecture where each layer has a specific r
 **Purpose**: Implement upload logic
 
 **Responsibilities**:
+
 - Upload state machine
 - Task lifecycle management
 - Queue management
@@ -125,6 +130,7 @@ ChunkFlow is built with a layered architecture where each layer has a specific r
 **Used By**: Client, Component layers, or directly
 
 **Key Files**:
+
 - `UploadManager.ts` - Task manager
 - `UploadTask.ts` - Single upload task
 - `ChunkSizeAdjuster.ts` - Dynamic chunking
@@ -135,6 +141,7 @@ ChunkFlow is built with a layered architecture where each layer has a specific r
 **Purpose**: Framework integration
 
 **Responsibilities**:
+
 - Framework-specific adapters
 - Reactive state management
 - Lifecycle integration
@@ -145,12 +152,14 @@ ChunkFlow is built with a layered architecture where each layer has a specific r
 **Used By**: Component layer, or directly
 
 **React Package**:
+
 - `UploadProvider.tsx` - Context provider
 - `useUpload.ts` - Upload hook
 - `useUploadList.ts` - List hook
 - `useUploadManager.ts` - Manager hook
 
 **Vue Package**:
+
 - `plugin.ts` - Vue plugin
 - `useUpload.ts` - Upload composable
 - `useUploadList.ts` - List composable
@@ -160,6 +169,7 @@ ChunkFlow is built with a layered architecture where each layer has a specific r
 **Purpose**: Ready-to-use UI components
 
 **Responsibilities**:
+
 - Pre-built upload components
 - Default styling
 - Accessibility
@@ -170,6 +180,7 @@ ChunkFlow is built with a layered architecture where each layer has a specific r
 **Used By**: Applications
 
 **Components**:
+
 - `UploadButton` - File selection
 - `UploadList` - Task list
 - `UploadProgress` - Progress bar
@@ -180,6 +191,7 @@ ChunkFlow is built with a layered architecture where each layer has a specific r
 **Purpose**: Server-side implementation
 
 **Responsibilities**:
+
 - Upload service logic
 - Storage adapters
 - Database adapters
@@ -191,6 +203,7 @@ ChunkFlow is built with a layered architecture where each layer has a specific r
 **Used By**: Server applications
 
 **Key Files**:
+
 - `UploadService.ts` - Main service
 - `adapters/storage/` - Storage adapters
 - `adapters/database/` - Database adapters
@@ -203,14 +216,14 @@ Each layer is independent and can be used separately:
 
 ```typescript
 // Use only Core layer
-import { UploadManager } from '@chunkflow/core';
+import { UploadManager } from "@chunkflow/core";
 
 // Use Core + React Client
-import { UploadManager } from '@chunkflow/core';
-import { useUpload } from '@chunkflow/upload-client-react';
+import { UploadManager } from "@chunkflow/core";
+import { useUpload } from "@chunkflow/upload-client-react";
 
 // Use everything
-import { UploadButton } from '@chunkflow/upload-component-react';
+import { UploadButton } from "@chunkflow/upload-component-react";
 ```
 
 ### 2. Progressive Enhancement
@@ -223,7 +236,7 @@ const task = manager.createTask(file);
 await task.start();
 
 // Add progress tracking
-task.on('progress', ({ progress }) => {
+task.on("progress", ({ progress }) => {
   console.log(progress);
 });
 
@@ -235,6 +248,7 @@ manager.use(new StatisticsPlugin());
 ### 3. Performance First
 
 Optimizations built-in:
+
 - Parallel hash calculation and upload
 - Dynamic chunk sizing
 - Concurrency control
@@ -243,6 +257,7 @@ Optimizations built-in:
 ### 4. Type Safety
 
 Full TypeScript support:
+
 - All APIs are typed
 - Type inference works everywhere
 - No `any` types in public APIs
@@ -250,6 +265,7 @@ Full TypeScript support:
 ### 5. Testability
 
 Each layer is independently testable:
+
 - Unit tests for utilities
 - Integration tests for layers
 - Property-based tests for correctness
@@ -405,7 +421,7 @@ chunkflow/
 Protocol ← Shared ← Core ← Client ← Component
    ↑                         ↑
    └─────────────────────────┘
-   
+
 Protocol ← Server
 ```
 

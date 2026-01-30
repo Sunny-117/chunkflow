@@ -7,8 +7,8 @@
 上传功能的 Vue 插件。
 
 ```typescript
-import { createApp } from 'vue';
-import { UploadPlugin } from '@chunkflow/upload-client-vue';
+import { createApp } from "vue";
+import { UploadPlugin } from "@chunkflow/upload-client-vue";
 
 const app = createApp(App);
 app.use(UploadPlugin, { requestAdapter: adapter });
@@ -20,7 +20,7 @@ app.use(UploadPlugin, { requestAdapter: adapter });
 
 ```vue
 <script setup>
-import { useUpload } from '@chunkflow/upload-client-vue';
+import { useUpload } from "@chunkflow/upload-client-vue";
 
 const { upload, status, progress, pause, resume, cancel } = useUpload({
   onSuccess: (fileUrl) => console.log(fileUrl),
@@ -43,18 +43,14 @@ const { upload, status, progress, pause, resume, cancel } = useUpload({
 
 ```vue
 <script setup>
-import { useUploadList } from '@chunkflow/upload-client-vue';
+import { useUploadList } from "@chunkflow/upload-client-vue";
 
 const { tasks, uploadFiles, pauseAll, resumeAll, cancelAll } = useUploadList();
 </script>
 
 <template>
   <div>
-    <input 
-      type="file" 
-      multiple 
-      @change="(e) => uploadFiles(Array.from(e.target.files))" 
-    />
+    <input type="file" multiple @change="(e) => uploadFiles(Array.from(e.target.files))" />
     <button @click="pauseAll">全部暂停</button>
     <button @click="resumeAll">全部恢复</button>
     <div v-for="task in tasks" :key="task.id">

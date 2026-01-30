@@ -7,12 +7,12 @@
 处理上传的主服务类。
 
 ```typescript
-import { UploadService, LocalStorageAdapter, PostgreSQLAdapter } from '@chunkflow/upload-server';
+import { UploadService, LocalStorageAdapter, PostgreSQLAdapter } from "@chunkflow/upload-server";
 
 const service = new UploadService({
-  storageAdapter: new LocalStorageAdapter('./storage'),
+  storageAdapter: new LocalStorageAdapter("./storage"),
   database: new PostgreSQLAdapter(dbConfig),
-  tokenSecret: 'your-secret',
+  tokenSecret: "your-secret",
   defaultChunkSize: 1024 * 1024,
 });
 ```
@@ -23,9 +23,9 @@ const service = new UploadService({
 
 ```typescript
 const response = await service.createFile({
-  fileName: 'video.mp4',
+  fileName: "video.mp4",
   fileSize: 100 * 1024 * 1024,
-  fileType: 'video/mp4',
+  fileType: "video/mp4",
 });
 ```
 
@@ -33,7 +33,7 @@ const response = await service.createFile({
 
 ```typescript
 const response = await service.verifyHash({
-  fileHash: 'abc123...',
+  fileHash: "abc123...",
   uploadToken: token,
 });
 ```
@@ -44,7 +44,7 @@ const response = await service.verifyHash({
 const response = await service.uploadChunk({
   uploadToken: token,
   chunkIndex: 0,
-  chunkHash: 'chunk123...',
+  chunkHash: "chunk123...",
   chunk: buffer,
 });
 ```
@@ -54,8 +54,8 @@ const response = await service.uploadChunk({
 ```typescript
 const response = await service.mergeFile({
   uploadToken: token,
-  fileHash: 'abc123...',
-  chunkHashes: ['chunk1...', 'chunk2...'],
+  fileHash: "abc123...",
+  chunkHashes: ["chunk1...", "chunk2..."],
 });
 ```
 
@@ -70,17 +70,17 @@ const stream = await service.getFileStream(fileId);
 ### LocalStorageAdapter
 
 ```typescript
-const storage = new LocalStorageAdapter('./storage');
+const storage = new LocalStorageAdapter("./storage");
 ```
 
 ### OSSStorageAdapter
 
 ```typescript
 const storage = new OSSStorageAdapter({
-  region: 'oss-cn-hangzhou',
-  accessKeyId: 'key',
-  accessKeySecret: 'secret',
-  bucket: 'bucket',
+  region: "oss-cn-hangzhou",
+  accessKeyId: "key",
+  accessKeySecret: "secret",
+  bucket: "bucket",
 });
 ```
 
@@ -90,11 +90,11 @@ const storage = new OSSStorageAdapter({
 
 ```typescript
 const database = new PostgreSQLAdapter({
-  host: 'localhost',
+  host: "localhost",
   port: 5432,
-  database: 'chunkflow',
-  user: 'postgres',
-  password: 'postgres',
+  database: "chunkflow",
+  user: "postgres",
+  password: "postgres",
 });
 ```
 

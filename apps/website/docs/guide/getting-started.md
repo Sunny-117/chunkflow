@@ -88,16 +88,16 @@ yarn add @chunkflow/upload-server
 
 ChunkFlow is organized into multiple packages:
 
-| Package | Description |
-|---------|-------------|
-| `@chunkflow/protocol` | TypeScript type definitions and interfaces |
-| `@chunkflow/shared` | Common utilities (events, concurrency, file utils) |
-| `@chunkflow/core` | Core upload logic and state machine |
-| `@chunkflow/upload-client-react` | React Hooks and Context |
-| `@chunkflow/upload-client-vue` | Vue Composables and Plugin |
-| `@chunkflow/upload-component-react` | Ready-to-use React components |
-| `@chunkflow/upload-component-vue` | Ready-to-use Vue components |
-| `@chunkflow/upload-server` | Server-side SDK for Node.js |
+| Package                             | Description                                        |
+| ----------------------------------- | -------------------------------------------------- |
+| `@chunkflow/protocol`               | TypeScript type definitions and interfaces         |
+| `@chunkflow/shared`                 | Common utilities (events, concurrency, file utils) |
+| `@chunkflow/core`                   | Core upload logic and state machine                |
+| `@chunkflow/upload-client-react`    | React Hooks and Context                            |
+| `@chunkflow/upload-client-vue`      | Vue Composables and Plugin                         |
+| `@chunkflow/upload-component-react` | Ready-to-use React components                      |
+| `@chunkflow/upload-component-vue`   | Ready-to-use Vue components                        |
+| `@chunkflow/upload-server`          | Server-side SDK for Node.js                        |
 
 ## Quick Start with React
 
@@ -106,12 +106,12 @@ ChunkFlow is organized into multiple packages:
 The request adapter handles communication with your server:
 
 ```typescript
-import { createFetchAdapter } from '@chunkflow/core';
+import { createFetchAdapter } from "@chunkflow/core";
 
 const adapter = createFetchAdapter({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: "http://localhost:3000/api",
   headers: {
-    'Authorization': 'Bearer your-token',
+    Authorization: "Bearer your-token",
   },
 });
 ```
@@ -119,7 +119,7 @@ const adapter = createFetchAdapter({
 ### 2. Wrap Your App with UploadProvider
 
 ```tsx
-import { UploadProvider } from '@chunkflow/upload-client-react';
+import { UploadProvider } from "@chunkflow/upload-client-react";
 
 function App() {
   return (
@@ -133,17 +133,13 @@ function App() {
 ### 3. Use Upload Components
 
 ```tsx
-import { UploadButton, UploadList } from '@chunkflow/upload-component-react';
+import { UploadButton, UploadList } from "@chunkflow/upload-component-react";
 
 function UploadPage() {
   return (
     <div>
       <h1>Upload Files</h1>
-      <UploadButton 
-        accept="image/*,video/*" 
-        maxSize={100 * 1024 * 1024}
-        multiple
-      >
+      <UploadButton accept="image/*,video/*" maxSize={100 * 1024 * 1024} multiple>
         Select Files
       </UploadButton>
       <UploadList />
@@ -155,15 +151,15 @@ function UploadPage() {
 ### 4. Or Use Hooks for Custom UI
 
 ```tsx
-import { useUpload } from '@chunkflow/upload-client-react';
+import { useUpload } from "@chunkflow/upload-client-react";
 
 function CustomUpload() {
   const { upload, status, progress, pause, resume, cancel } = useUpload({
     onSuccess: (fileUrl) => {
-      console.log('Upload complete:', fileUrl);
+      console.log("Upload complete:", fileUrl);
     },
     onError: (error) => {
-      console.error('Upload failed:', error);
+      console.error("Upload failed:", error);
     },
   });
 
@@ -177,7 +173,7 @@ function CustomUpload() {
   return (
     <div>
       <input type="file" onChange={handleFileSelect} />
-      {status === 'uploading' && (
+      {status === "uploading" && (
         <div>
           <p>Progress: {progress.percentage.toFixed(1)}%</p>
           <p>Speed: {formatSpeed(progress.speed)}</p>
@@ -185,9 +181,7 @@ function CustomUpload() {
           <button onClick={cancel}>Cancel</button>
         </div>
       )}
-      {status === 'paused' && (
-        <button onClick={resume}>Resume</button>
-      )}
+      {status === "paused" && <button onClick={resume}>Resume</button>}
     </div>
   );
 }
@@ -198,35 +192,31 @@ function CustomUpload() {
 ### 1. Install the Plugin
 
 ```typescript
-import { createApp } from 'vue';
-import { UploadPlugin } from '@chunkflow/upload-client-vue';
-import { createFetchAdapter } from '@chunkflow/core';
-import App from './App.vue';
+import { createApp } from "vue";
+import { UploadPlugin } from "@chunkflow/upload-client-vue";
+import { createFetchAdapter } from "@chunkflow/core";
+import App from "./App.vue";
 
 const adapter = createFetchAdapter({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: "http://localhost:3000/api",
 });
 
 const app = createApp(App);
 app.use(UploadPlugin, { requestAdapter: adapter });
-app.mount('#app');
+app.mount("#app");
 ```
 
 ### 2. Use Upload Components
 
 ```vue
 <script setup>
-import { UploadButton, UploadList } from '@chunkflow/upload-component-vue';
+import { UploadButton, UploadList } from "@chunkflow/upload-component-vue";
 </script>
 
 <template>
   <div>
     <h1>Upload Files</h1>
-    <UploadButton 
-      accept="image/*,video/*" 
-      :max-size="100 * 1024 * 1024"
-      multiple
-    >
+    <UploadButton accept="image/*,video/*" :max-size="100 * 1024 * 1024" multiple>
       Select Files
     </UploadButton>
     <UploadList />
@@ -275,10 +265,10 @@ const handleFileSelect = (e: Event) => {
 ## Quick Start with Vanilla JavaScript
 
 ```typescript
-import { UploadManager, createFetchAdapter } from '@chunkflow/core';
+import { UploadManager, createFetchAdapter } from "@chunkflow/core";
 
 const adapter = createFetchAdapter({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: "http://localhost:3000/api",
 });
 
 const manager = new UploadManager({
@@ -291,16 +281,16 @@ await manager.init();
 const file = document.querySelector('input[type="file"]').files[0];
 const task = manager.createTask(file);
 
-task.on('progress', ({ progress, speed }) => {
+task.on("progress", ({ progress, speed }) => {
   console.log(`Progress: ${progress}%, Speed: ${speed} bytes/s`);
 });
 
-task.on('success', ({ fileUrl }) => {
-  console.log('Upload complete:', fileUrl);
+task.on("success", ({ fileUrl }) => {
+  console.log("Upload complete:", fileUrl);
 });
 
-task.on('error', ({ error }) => {
-  console.error('Upload failed:', error);
+task.on("error", ({ error }) => {
+  console.error("Upload failed:", error);
 });
 
 await task.start();

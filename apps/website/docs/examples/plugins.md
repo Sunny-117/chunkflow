@@ -5,10 +5,10 @@ Examples for creating custom plugins to extend ChunkFlow functionality.
 ## Logger Plugin
 
 ```typescript
-import { Plugin, UploadTask, UploadProgress } from '@chunkflow/core';
+import { Plugin, UploadTask, UploadProgress } from "@chunkflow/core";
 
 export class LoggerPlugin implements Plugin {
-  name = 'logger';
+  name = "logger";
 
   onTaskCreated(task: UploadTask): void {
     console.log(`[Logger] Task created: ${task.id}`, {
@@ -45,10 +45,10 @@ manager.use(new LoggerPlugin());
 ## Analytics Plugin
 
 ```typescript
-import { Plugin, UploadTask, UploadProgress } from '@chunkflow/core';
+import { Plugin, UploadTask, UploadProgress } from "@chunkflow/core";
 
 export class AnalyticsPlugin implements Plugin {
-  name = 'analytics';
+  name = "analytics";
   private analytics: any; // Your analytics service
 
   constructor(analytics: any) {
@@ -56,7 +56,7 @@ export class AnalyticsPlugin implements Plugin {
   }
 
   onTaskCreated(task: UploadTask): void {
-    this.analytics.track('upload_started', {
+    this.analytics.track("upload_started", {
       taskId: task.id,
       fileName: task.file.name,
       fileSize: task.file.size,
@@ -65,7 +65,7 @@ export class AnalyticsPlugin implements Plugin {
   }
 
   onTaskSuccess(task: UploadTask): void {
-    this.analytics.track('upload_completed', {
+    this.analytics.track("upload_completed", {
       taskId: task.id,
       fileName: task.file.name,
       fileSize: task.file.size,
@@ -74,7 +74,7 @@ export class AnalyticsPlugin implements Plugin {
   }
 
   onTaskError(task: UploadTask, error: Error): void {
-    this.analytics.track('upload_failed', {
+    this.analytics.track("upload_failed", {
       taskId: task.id,
       fileName: task.file.name,
       error: error.message,
@@ -89,7 +89,7 @@ manager.use(new AnalyticsPlugin(analytics));
 ## Statistics Plugin
 
 ```typescript
-import { Plugin, UploadTask } from '@chunkflow/core';
+import { Plugin, UploadTask } from "@chunkflow/core";
 
 interface UploadStats {
   totalUploaded: number;
@@ -100,7 +100,7 @@ interface UploadStats {
 }
 
 export class StatisticsPlugin implements Plugin {
-  name = 'statistics';
+  name = "statistics";
   private stats: UploadStats = {
     totalUploaded: 0,
     totalFiles: 0,
@@ -117,11 +117,10 @@ export class StatisticsPlugin implements Plugin {
   onTaskSuccess(task: UploadTask): void {
     this.stats.successCount++;
     this.stats.totalUploaded += task.file.size;
-    
+
     const progress = task.getProgress();
     this.speeds.push(progress.speed);
-    this.stats.averageSpeed = 
-      this.speeds.reduce((a, b) => a + b, 0) / this.speeds.length;
+    this.stats.averageSpeed = this.speeds.reduce((a, b) => a + b, 0) / this.speeds.length;
   }
 
   onTaskError(task: UploadTask): void {
@@ -155,25 +154,25 @@ console.log(stats.getStats());
 ## Notification Plugin
 
 ```typescript
-import { Plugin, UploadTask } from '@chunkflow/core';
+import { Plugin, UploadTask } from "@chunkflow/core";
 
 export class NotificationPlugin implements Plugin {
-  name = 'notification';
+  name = "notification";
 
   onTaskSuccess(task: UploadTask): void {
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('Upload Complete', {
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification("Upload Complete", {
         body: `${task.file.name} has been uploaded successfully`,
-        icon: '/upload-icon.png',
+        icon: "/upload-icon.png",
       });
     }
   }
 
   onTaskError(task: UploadTask, error: Error): void {
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('Upload Failed', {
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification("Upload Failed", {
         body: `${task.file.name} failed to upload: ${error.message}`,
-        icon: '/error-icon.png',
+        icon: "/error-icon.png",
       });
     }
   }
@@ -181,9 +180,9 @@ export class NotificationPlugin implements Plugin {
 
 // Usage
 // Request permission first
-if ('Notification' in window) {
-  Notification.requestPermission().then(permission => {
-    if (permission === 'granted') {
+if ("Notification" in window) {
+  Notification.requestPermission().then((permission) => {
+    if (permission === "granted") {
       manager.use(new NotificationPlugin());
     }
   });
@@ -193,23 +192,26 @@ if ('Notification' in window) {
 ## Retry Strategy Plugin
 
 ```typescript
-import { Plugin, UploadTask } from '@chunkflow/core';
+import { Plugin, UploadTask } from "@chunkflow/core";
 
 export class RetryStrategyPlugin implements Plugin {
-  name = 'retry-strategy';
+  name = "retry-strategy";
   private retryAttempts = new Map<string, number>();
 
   onTaskError(task: UploadTask, error: Error): void {
     const attempts = this.retryAttempts.get(task.id) || 0;
-    
+
     if (attempts < 3) {
       console.log(`Retrying task ${task.id}, attempt ${attempts + 1}`);
       this.retryAttempts.set(task.id, attempts + 1);
-      
+
       // Retry after delay
-      setTimeout(() => {
-        task.resume();
-      }, 1000 * Math.pow(2, attempts)); // Exponential backoff
+      setTimeout(
+        () => {
+          task.resume();
+        },
+        1000 * Math.pow(2, attempts),
+      ); // Exponential backoff
     } else {
       console.error(`Task ${task.id} failed after 3 attempts`);
       this.retryAttempts.delete(task.id);

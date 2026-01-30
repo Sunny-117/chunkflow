@@ -6,11 +6,11 @@ Complete guide to configuring ChunkFlow on the client side.
 
 ```typescript
 const manager = new UploadManager({
-  requestAdapter: adapter,           // Required
-  maxConcurrentTasks: 3,            // Max parallel uploads
-  defaultChunkSize: 1024 * 1024,    // Default chunk size (1MB)
-  defaultConcurrency: 3,            // Chunks uploaded in parallel
-  autoResumeUnfinished: true,       // Auto-resume on init
+  requestAdapter: adapter, // Required
+  maxConcurrentTasks: 3, // Max parallel uploads
+  defaultChunkSize: 1024 * 1024, // Default chunk size (1MB)
+  defaultConcurrency: 3, // Chunks uploaded in parallel
+  autoResumeUnfinished: true, // Auto-resume on init
 });
 ```
 
@@ -18,11 +18,11 @@ const manager = new UploadManager({
 
 ```typescript
 const task = manager.createTask(file, {
-  chunkSize: 2 * 1024 * 1024,  // 2MB chunks
-  concurrency: 5,               // 5 parallel chunks
-  retryCount: 3,                // Retry 3 times
-  retryDelay: 1000,             // 1s between retries
-  autoStart: false,             // Don't start immediately
+  chunkSize: 2 * 1024 * 1024, // 2MB chunks
+  concurrency: 5, // 5 parallel chunks
+  retryCount: 3, // Retry 3 times
+  retryDelay: 1000, // 1s between retries
+  autoStart: false, // Don't start immediately
 });
 ```
 
@@ -30,9 +30,9 @@ const task = manager.createTask(file, {
 
 ```typescript
 const adapter = createFetchAdapter({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: "http://localhost:3000/api",
   headers: {
-    'Authorization': 'Bearer token',
+    Authorization: "Bearer token",
   },
   timeout: 30000,
   withCredentials: true,

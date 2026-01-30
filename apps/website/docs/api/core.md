@@ -16,11 +16,11 @@ new UploadManager(options: UploadManagerOptions)
 
 ```typescript
 interface UploadManagerOptions {
-  requestAdapter: RequestAdapter;     // HTTP adapter (required)
-  maxConcurrentTasks?: number;        // Max parallel uploads (default: 3)
-  defaultChunkSize?: number;          // Default chunk size (default: 1MB)
-  defaultConcurrency?: number;        // Default chunk concurrency (default: 3)
-  autoResumeUnfinished?: boolean;     // Auto-resume on init (default: true)
+  requestAdapter: RequestAdapter; // HTTP adapter (required)
+  maxConcurrentTasks?: number; // Max parallel uploads (default: 3)
+  defaultChunkSize?: number; // Default chunk size (default: 1MB)
+  defaultConcurrency?: number; // Default chunk concurrency (default: 3)
+  autoResumeUnfinished?: boolean; // Auto-resume on init (default: true)
 }
 ```
 
@@ -43,17 +43,19 @@ manager.createTask(file: File, options?: Partial<UploadTaskOptions>): UploadTask
 ```
 
 **Parameters:**
+
 - `file`: File to upload
 - `options`: Task-specific options (optional)
 
 **Returns:** UploadTask instance
 
 **Example:**
+
 ```typescript
 const task = manager.createTask(file, {
-  chunkSize: 2 * 1024 * 1024,  // 2MB chunks
-  concurrency: 5,               // 5 parallel chunks
-  retryCount: 3,                // Retry 3 times
+  chunkSize: 2 * 1024 * 1024, // 2MB chunks
+  concurrency: 5, // 5 parallel chunks
+  retryCount: 3, // Retry 3 times
 });
 ```
 
@@ -92,10 +94,10 @@ manager.use(plugin: Plugin): void
 ### Example
 
 ```typescript
-import { UploadManager, createFetchAdapter } from '@chunkflow/core';
+import { UploadManager, createFetchAdapter } from "@chunkflow/core";
 
 const adapter = createFetchAdapter({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: "http://localhost:3000/api",
 });
 
 const manager = new UploadManager({
@@ -210,19 +212,19 @@ interface UploadEvents {
 ```typescript
 const task = manager.createTask(file);
 
-task.on('start', ({ taskId, file }) => {
+task.on("start", ({ taskId, file }) => {
   console.log(`Upload started: ${file.name}`);
 });
 
-task.on('progress', ({ progress, speed }) => {
+task.on("progress", ({ progress, speed }) => {
   console.log(`Progress: ${progress}%, Speed: ${speed} bytes/s`);
 });
 
-task.on('success', ({ fileUrl }) => {
+task.on("success", ({ fileUrl }) => {
   console.log(`Upload complete: ${fileUrl}`);
 });
 
-task.on('error', ({ error }) => {
+task.on("error", ({ error }) => {
   console.error(`Upload failed: ${error.message}`);
 });
 
@@ -235,13 +237,13 @@ Progress information for an upload task.
 
 ```typescript
 interface UploadProgress {
-  uploadedBytes: number;    // Bytes uploaded
-  totalBytes: number;       // Total bytes
-  percentage: number;       // Progress percentage (0-100)
-  speed: number;            // Upload speed (bytes/second)
-  remainingTime: number;    // Estimated remaining time (seconds)
-  uploadedChunks: number;   // Number of uploaded chunks
-  totalChunks: number;      // Total number of chunks
+  uploadedBytes: number; // Bytes uploaded
+  totalBytes: number; // Total bytes
+  percentage: number; // Progress percentage (0-100)
+  speed: number; // Upload speed (bytes/second)
+  remainingTime: number; // Estimated remaining time (seconds)
+  uploadedChunks: number; // Number of uploaded chunks
+  totalChunks: number; // Total number of chunks
 }
 ```
 
@@ -259,10 +261,10 @@ new ChunkSizeAdjuster(options: ChunkSizeAdjusterOptions)
 
 ```typescript
 interface ChunkSizeAdjusterOptions {
-  initialSize: number;    // Initial chunk size
-  minSize: number;        // Minimum chunk size
-  maxSize: number;        // Maximum chunk size
-  targetTime?: number;    // Target upload time per chunk (ms, default: 3000)
+  initialSize: number; // Initial chunk size
+  minSize: number; // Minimum chunk size
+  maxSize: number; // Maximum chunk size
+  targetTime?: number; // Target upload time per chunk (ms, default: 3000)
 }
 ```
 
@@ -277,11 +279,13 @@ adjuster.adjust(uploadTimeMs: number): number
 ```
 
 **Parameters:**
+
 - `uploadTimeMs`: Time taken to upload the last chunk (milliseconds)
 
 **Returns:** New chunk size
 
 **Algorithm:**
+
 - If upload time < 50% of target → Increase size (up to max)
 - If upload time > 150% of target → Decrease size (down to min)
 - Otherwise → Keep current size
@@ -298,10 +302,10 @@ adjuster.getCurrentSize(): number
 
 ```typescript
 const adjuster = new ChunkSizeAdjuster({
-  initialSize: 1024 * 1024,      // 1MB
-  minSize: 256 * 1024,           // 256KB
-  maxSize: 10 * 1024 * 1024,     // 10MB
-  targetTime: 3000,              // 3 seconds
+  initialSize: 1024 * 1024, // 1MB
+  minSize: 256 * 1024, // 256KB
+  maxSize: 10 * 1024 * 1024, // 10MB
+  targetTime: 3000, // 3 seconds
 });
 
 // After uploading a chunk
@@ -335,7 +339,7 @@ interface Plugin {
 Logs upload events to console.
 
 ```typescript
-import { LoggerPlugin } from '@chunkflow/core';
+import { LoggerPlugin } from "@chunkflow/core";
 
 manager.use(new LoggerPlugin());
 ```
@@ -345,7 +349,7 @@ manager.use(new LoggerPlugin());
 Tracks upload statistics.
 
 ```typescript
-import { StatisticsPlugin } from '@chunkflow/core';
+import { StatisticsPlugin } from "@chunkflow/core";
 
 const stats = new StatisticsPlugin();
 manager.use(stats);
@@ -361,10 +365,10 @@ console.log(data.errorCount);
 
 ```typescript
 class CustomPlugin implements Plugin {
-  name = 'custom';
+  name = "custom";
 
   install(manager: UploadManager) {
-    console.log('Plugin installed');
+    console.log("Plugin installed");
   }
 
   onTaskCreated(task: UploadTask) {
@@ -373,7 +377,7 @@ class CustomPlugin implements Plugin {
 
   onTaskProgress(task: UploadTask, progress: UploadProgress) {
     // Send progress to analytics
-    analytics.track('upload_progress', {
+    analytics.track("upload_progress", {
       taskId: task.id,
       percentage: progress.percentage,
     });
@@ -381,7 +385,7 @@ class CustomPlugin implements Plugin {
 
   onTaskSuccess(task: UploadTask) {
     // Send success event
-    analytics.track('upload_success', {
+    analytics.track("upload_success", {
       taskId: task.id,
       fileName: task.file.name,
       fileSize: task.file.size,
@@ -390,7 +394,7 @@ class CustomPlugin implements Plugin {
 
   onTaskError(task: UploadTask, error: Error) {
     // Send error event
-    analytics.track('upload_error', {
+    analytics.track("upload_error", {
       taskId: task.id,
       error: error.message,
     });
@@ -414,10 +418,10 @@ createFetchAdapter(options: FetchAdapterOptions): RequestAdapter
 
 ```typescript
 interface FetchAdapterOptions {
-  baseURL: string;                          // API base URL
-  headers?: Record<string, string>;         // Custom headers
-  timeout?: number;                         // Request timeout (ms)
-  withCredentials?: boolean;                // Include credentials
+  baseURL: string; // API base URL
+  headers?: Record<string, string>; // Custom headers
+  timeout?: number; // Request timeout (ms)
+  withCredentials?: boolean; // Include credentials
   onUploadProgress?: (progress: number) => void; // Upload progress callback
 }
 ```
@@ -426,9 +430,9 @@ interface FetchAdapterOptions {
 
 ```typescript
 const adapter = createFetchAdapter({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: "http://localhost:3000/api",
   headers: {
-    'Authorization': 'Bearer token',
+    Authorization: "Bearer token",
   },
   timeout: 30000,
   withCredentials: true,
@@ -457,7 +461,7 @@ import type {
   Plugin,
   ChunkSizeAdjuster,
   ChunkSizeAdjusterOptions,
-} from '@chunkflow/core';
+} from "@chunkflow/core";
 ```
 
 ## See Also

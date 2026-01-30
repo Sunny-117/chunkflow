@@ -7,16 +7,16 @@
 文件选择按钮。
 
 ```tsx
-import { UploadButton } from '@chunkflow/upload-component-react';
+import { UploadButton } from "@chunkflow/upload-component-react";
 
-<UploadButton 
+<UploadButton
   accept="image/*,video/*"
   maxSize={100 * 1024 * 1024}
   multiple
   onSelect={(files) => console.log(files)}
 >
   选择文件
-</UploadButton>
+</UploadButton>;
 ```
 
 ### Props
@@ -33,13 +33,9 @@ import { UploadButton } from '@chunkflow/upload-component-react';
 进度条组件。
 
 ```tsx
-import { UploadProgress } from '@chunkflow/upload-component-react';
+import { UploadProgress } from "@chunkflow/upload-component-react";
 
-<UploadProgress 
-  task={task}
-  showSpeed
-  showRemainingTime
-/>
+<UploadProgress task={task} showSpeed showRemainingTime />;
 ```
 
 ### Props
@@ -54,11 +50,9 @@ import { UploadProgress } from '@chunkflow/upload-component-react';
 任务列表组件。
 
 ```tsx
-import { UploadList } from '@chunkflow/upload-component-react';
+import { UploadList } from "@chunkflow/upload-component-react";
 
-<UploadList 
-  renderItem={(task) => <CustomItem task={task} />}
-/>
+<UploadList renderItem={(task) => <CustomItem task={task} />} />;
 ```
 
 ### Props
@@ -71,15 +65,11 @@ import { UploadList } from '@chunkflow/upload-component-react';
 拖放区域。
 
 ```tsx
-import { UploadDropzone } from '@chunkflow/upload-component-react';
+import { UploadDropzone } from "@chunkflow/upload-component-react";
 
-<UploadDropzone 
-  accept="image/*"
-  maxSize={50 * 1024 * 1024}
-  onDrop={(files) => console.log(files)}
->
+<UploadDropzone accept="image/*" maxSize={50 * 1024 * 1024} onDrop={(files) => console.log(files)}>
   <p>拖放文件到这里或点击选择</p>
-</UploadDropzone>
+</UploadDropzone>;
 ```
 
 ### Props

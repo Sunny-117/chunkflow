@@ -8,10 +8,10 @@ ChunkFlow uses upload tokens for authorization:
 
 ```typescript
 interface UploadToken {
-  token: string;      // JWT or similar
-  fileId: string;     // File identifier
-  chunkSize: number;  // Negotiated chunk size
-  expiresAt: number;  // Expiration timestamp
+  token: string; // JWT or similar
+  fileId: string; // File identifier
+  chunkSize: number; // Negotiated chunk size
+  expiresAt: number; // Expiration timestamp
 }
 ```
 
@@ -30,7 +30,7 @@ const fileId = verifyToken(uploadToken);
 // Verify chunk hash matches content
 const calculatedHash = calculateHash(chunk);
 if (calculatedHash !== chunkHash) {
-  throw new Error('Hash mismatch');
+  throw new Error("Hash mismatch");
 }
 ```
 
@@ -39,7 +39,7 @@ if (calculatedHash !== chunkHash) {
 ```typescript
 // Enforce maximum file size
 if (fileSize > MAX_FILE_SIZE) {
-  throw new Error('File too large');
+  throw new Error("File too large");
 }
 ```
 
@@ -48,7 +48,7 @@ if (fileSize > MAX_FILE_SIZE) {
 ### File Type Validation
 
 ```typescript
-<UploadButton 
+<UploadButton
   accept="image/*,video/*"
   maxSize={100 * 1024 * 1024}
 />
@@ -58,7 +58,7 @@ if (fileSize > MAX_FILE_SIZE) {
 
 ```typescript
 if (file.size > maxSize) {
-  throw new FileValidationError('File too large');
+  throw new FileValidationError("File too large");
 }
 ```
 
@@ -79,10 +79,12 @@ if (file.size > maxSize) {
 
 ```typescript
 // Express
-app.use(cors({
-  origin: 'https://your-domain.com',
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: "https://your-domain.com",
+    credentials: true,
+  }),
+);
 ```
 
 ## See Also

@@ -14,10 +14,10 @@ pnpm add @chunkflow/core @chunkflow/upload-client-react @chunkflow/upload-compon
 
 ```typescript
 // src/lib/upload.ts
-import { createFetchAdapter } from '@chunkflow/core';
+import { createFetchAdapter } from "@chunkflow/core";
 
 export const uploadAdapter = createFetchAdapter({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api",
 });
 ```
 
@@ -25,9 +25,9 @@ export const uploadAdapter = createFetchAdapter({
 
 ```tsx
 // src/App.tsx
-import { UploadProvider } from '@chunkflow/upload-client-react';
-import { uploadAdapter } from './lib/upload';
-import { UploadPage } from './pages/UploadPage';
+import { UploadProvider } from "@chunkflow/upload-client-react";
+import { uploadAdapter } from "./lib/upload";
+import { UploadPage } from "./pages/UploadPage";
 
 export default function App() {
   return (
@@ -42,13 +42,13 @@ export default function App() {
 
 ```tsx
 // src/pages/UploadPage.tsx
-import { UploadButton, UploadList } from '@chunkflow/upload-component-react';
+import { UploadButton, UploadList } from "@chunkflow/upload-component-react";
 
 export function UploadPage() {
   return (
     <div className="container">
       <h1>上传文件</h1>
-      <UploadButton 
+      <UploadButton
         accept="image/*,video/*,application/pdf"
         maxSize={500 * 1024 * 1024} // 500MB
         multiple
@@ -75,18 +75,18 @@ pnpm add @chunkflow/core @chunkflow/upload-client-vue @chunkflow/upload-componen
 
 ```typescript
 // src/main.ts
-import { createApp } from 'vue';
-import { UploadPlugin } from '@chunkflow/upload-client-vue';
-import { createFetchAdapter } from '@chunkflow/core';
-import App from './App.vue';
+import { createApp } from "vue";
+import { UploadPlugin } from "@chunkflow/upload-client-vue";
+import { createFetchAdapter } from "@chunkflow/core";
+import App from "./App.vue";
 
 const adapter = createFetchAdapter({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api",
 });
 
 const app = createApp(App);
 app.use(UploadPlugin, { requestAdapter: adapter });
-app.mount('#app');
+app.mount("#app");
 ```
 
 ### 步骤 3：使用组件
@@ -94,17 +94,13 @@ app.mount('#app');
 ```vue
 <!-- src/pages/UploadPage.vue -->
 <script setup>
-import { UploadButton, UploadList } from '@chunkflow/upload-component-vue';
+import { UploadButton, UploadList } from "@chunkflow/upload-component-vue";
 </script>
 
 <template>
   <div class="container">
     <h1>上传文件</h1>
-    <UploadButton 
-      accept="image/*,video/*,application/pdf"
-      :max-size="500 * 1024 * 1024"
-      multiple
-    >
+    <UploadButton accept="image/*,video/*,application/pdf" :max-size="500 * 1024 * 1024" multiple>
       📁 选择文件
     </UploadButton>
     <UploadList />

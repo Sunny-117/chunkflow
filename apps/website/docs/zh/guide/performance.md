@@ -61,7 +61,7 @@ const task = manager.createTask(file, {
 ## 监控
 
 ```typescript
-task.on('progress', ({ speed, remainingTime }) => {
+task.on("progress", ({ speed, remainingTime }) => {
   console.log(`速度: ${formatSpeed(speed)}`);
   console.log(`预计剩余时间: ${formatTime(remainingTime)}`);
 });

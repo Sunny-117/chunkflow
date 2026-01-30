@@ -10,17 +10,19 @@ For small files, ChunkFlow uses direct upload:
 
 ```typescript
 // File < 5MB → Direct upload
-const smallFile = new File(['content'], 'small.txt');
+const smallFile = new File(["content"], "small.txt");
 const task = manager.createTask(smallFile);
 await task.start(); // Uploads entire file in one request
 ```
 
 **Advantages**:
+
 - Faster for small files
 - Single HTTP request
 - Lower overhead
 
 **Use Cases**:
+
 - Images
 - Documents
 - Small videos
@@ -32,18 +34,20 @@ For large files, ChunkFlow uses chunked upload:
 
 ```typescript
 // File ≥ 5MB → Chunked upload
-const largeFile = new File([new ArrayBuffer(10 * 1024 * 1024)], 'large.bin');
+const largeFile = new File([new ArrayBuffer(10 * 1024 * 1024)], "large.bin");
 const task = manager.createTask(largeFile);
 await task.start(); // Uploads file in chunks
 ```
 
 **Advantages**:
+
 - Resumable
 - Better error recovery
 - Progress tracking
 - Memory efficient
 
 **Use Cases**:
+
 - Large videos
 - Archives
 - Datasets
@@ -54,7 +58,7 @@ await task.start(); // Uploads file in chunks
 You can customize the threshold:
 
 ```typescript
-import { DIRECT_UPLOAD_THRESHOLD } from '@chunkflow/protocol';
+import { DIRECT_UPLOAD_THRESHOLD } from "@chunkflow/protocol";
 
 // Default is 5MB
 console.log(DIRECT_UPLOAD_THRESHOLD); // 5242880
@@ -102,11 +106,11 @@ If file hash matches an existing file:
 
 ```typescript
 // First upload
-const file1 = new File(['content'], 'file.txt');
+const file1 = new File(["content"], "file.txt");
 await manager.createTask(file1).start();
 
 // Second upload (instant)
-const file2 = new File(['content'], 'file.txt');
+const file2 = new File(["content"], "file.txt");
 await manager.createTask(file2).start(); // Completes immediately
 ```
 
@@ -143,15 +147,15 @@ See [Resumable Upload](/guide/resumable-upload) for details.
 
 ## Strategy Comparison
 
-| Feature | Direct Upload | Chunked Upload |
-|---------|--------------|----------------|
-| File Size | < 5MB | ≥ 5MB |
-| Requests | 1 | Multiple |
-| Resumable | ❌ | ✅ |
-| Progress | Basic | Detailed |
-| Memory | Higher | Lower |
-| Error Recovery | Restart | Resume |
-| Deduplication | File-level | Chunk-level |
+| Feature        | Direct Upload | Chunked Upload |
+| -------------- | ------------- | -------------- |
+| File Size      | < 5MB         | ≥ 5MB          |
+| Requests       | 1             | Multiple       |
+| Resumable      | ❌            | ✅             |
+| Progress       | Basic         | Detailed       |
+| Memory         | Higher        | Lower          |
+| Error Recovery | Restart       | Resume         |
+| Deduplication  | File-level    | Chunk-level    |
 
 ## Best Practices
 
@@ -173,13 +177,13 @@ Customize for specific needs:
 // For slow networks
 const task = manager.createTask(file, {
   chunkSize: 512 * 1024, // 512KB chunks
-  concurrency: 2,        // Lower concurrency
+  concurrency: 2, // Lower concurrency
 });
 
 // For fast networks
 const task = manager.createTask(file, {
   chunkSize: 5 * 1024 * 1024, // 5MB chunks
-  concurrency: 10,            // Higher concurrency
+  concurrency: 10, // Higher concurrency
 });
 ```
 
@@ -188,12 +192,13 @@ const task = manager.createTask(file, {
 Use events to track performance:
 
 ```typescript
-task.on('progress', ({ speed }) => {
+task.on("progress", ({ speed }) => {
   console.log(`Upload speed: ${speed} bytes/s`);
-  
+
   // Adjust strategy if needed
-  if (speed < 100 * 1024) { // < 100KB/s
-    console.warn('Slow network detected');
+  if (speed < 100 * 1024) {
+    // < 100KB/s
+    console.warn("Slow network detected");
   }
 });
 ```
@@ -204,12 +209,12 @@ Implement retry logic:
 
 ```typescript
 const task = manager.createTask(file, {
-  retryCount: 5,     // Retry up to 5 times
-  retryDelay: 2000,  // 2 seconds between retries
+  retryCount: 5, // Retry up to 5 times
+  retryDelay: 2000, // 2 seconds between retries
 });
 
-task.on('error', ({ error }) => {
-  console.error('Upload failed:', error);
+task.on("error", ({ error }) => {
+  console.error("Upload failed:", error);
   // Notify user or implement custom recovery
 });
 ```

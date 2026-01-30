@@ -8,10 +8,10 @@ ChunkFlow 使用上传 token 进行授权：
 
 ```typescript
 interface UploadToken {
-  token: string;      // JWT 或类似
-  fileId: string;     // 文件标识符
-  chunkSize: number;  // 协商的分片大小
-  expiresAt: number;  // 过期时间戳
+  token: string; // JWT 或类似
+  fileId: string; // 文件标识符
+  chunkSize: number; // 协商的分片大小
+  expiresAt: number; // 过期时间戳
 }
 ```
 
@@ -30,7 +30,7 @@ const fileId = verifyToken(uploadToken);
 // 验证分片哈希与内容匹配
 const calculatedHash = calculateHash(chunk);
 if (calculatedHash !== chunkHash) {
-  throw new Error('哈希不匹配');
+  throw new Error("哈希不匹配");
 }
 ```
 
@@ -39,7 +39,7 @@ if (calculatedHash !== chunkHash) {
 ```typescript
 // 强制执行最大文件大小
 if (fileSize > MAX_FILE_SIZE) {
-  throw new Error('文件太大');
+  throw new Error("文件太大");
 }
 ```
 
@@ -48,7 +48,7 @@ if (fileSize > MAX_FILE_SIZE) {
 ### 文件类型验证
 
 ```typescript
-<UploadButton 
+<UploadButton
   accept="image/*,video/*"
   maxSize={100 * 1024 * 1024}
 />
@@ -58,7 +58,7 @@ if (fileSize > MAX_FILE_SIZE) {
 
 ```typescript
 if (file.size > maxSize) {
-  throw new FileValidationError('文件太大');
+  throw new FileValidationError("文件太大");
 }
 ```
 
@@ -79,10 +79,12 @@ if (file.size > maxSize) {
 
 ```typescript
 // Express
-app.use(cors({
-  origin: 'https://your-domain.com',
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: "https://your-domain.com",
+    credentials: true,
+  }),
+);
 ```
 
 ## 另请参阅

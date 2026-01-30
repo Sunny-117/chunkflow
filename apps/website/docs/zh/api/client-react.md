@@ -7,7 +7,7 @@
 上传功能的 Context provider。
 
 ```tsx
-import { UploadProvider } from '@chunkflow/upload-client-react';
+import { UploadProvider } from "@chunkflow/upload-client-react";
 
 function App() {
   return (
@@ -23,7 +23,7 @@ function App() {
 单文件上传的 Hook。
 
 ```tsx
-import { useUpload } from '@chunkflow/upload-client-react';
+import { useUpload } from "@chunkflow/upload-client-react";
 
 function UploadComponent() {
   const { upload, status, progress, pause, resume, cancel } = useUpload({
@@ -46,21 +46,17 @@ function UploadComponent() {
 多文件上传的 Hook。
 
 ```tsx
-import { useUploadList } from '@chunkflow/upload-client-react';
+import { useUploadList } from "@chunkflow/upload-client-react";
 
 function UploadListComponent() {
   const { tasks, uploadFiles, pauseAll, resumeAll, cancelAll } = useUploadList();
 
   return (
     <div>
-      <input 
-        type="file" 
-        multiple 
-        onChange={(e) => uploadFiles(Array.from(e.target.files))} 
-      />
+      <input type="file" multiple onChange={(e) => uploadFiles(Array.from(e.target.files))} />
       <button onClick={pauseAll}>全部暂停</button>
       <button onClick={resumeAll}>全部恢复</button>
-      {tasks.map(task => (
+      {tasks.map((task) => (
         <div key={task.id}>{task.file.name}</div>
       ))}
     </div>
@@ -73,11 +69,11 @@ function UploadListComponent() {
 访问上传管理器的 Hook。
 
 ```tsx
-import { useUploadManager } from '@chunkflow/upload-client-react';
+import { useUploadManager } from "@chunkflow/upload-client-react";
 
 function Component() {
   const manager = useUploadManager();
-  
+
   // 直接使用管理器
   const task = manager.createTask(file);
 }

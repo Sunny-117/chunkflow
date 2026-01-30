@@ -6,15 +6,13 @@
 
 ```vue
 <script setup>
-import { UploadButton, UploadList } from '@chunkflow/upload-component-vue';
+import { UploadButton, UploadList } from "@chunkflow/upload-component-vue";
 </script>
 
 <template>
   <div class="container">
     <h1>上传文件</h1>
-    <UploadButton accept="*" multiple>
-      选择文件
-    </UploadButton>
+    <UploadButton accept="*" multiple> 选择文件 </UploadButton>
     <UploadList />
   </div>
 </template>
@@ -50,12 +48,12 @@ const formatSpeed = (bytesPerSecond: number): string => {
   const units = ['B/s', 'KB/s', 'MB/s', 'GB/s'];
   let speed = bytesPerSecond;
   let unitIndex = 0;
-  
+
   while (speed >= 1024 && unitIndex < units.length - 1) {
     speed /= 1024;
     unitIndex++;
   }
-  
+
   return `${speed.toFixed(2)} ${units[unitIndex]}`;
 };
 
@@ -69,11 +67,11 @@ const formatTime = (seconds: number): string => {
 <template>
   <div>
     <input type="file" @change="handleFileChange" />
-    
+
     <div v-if="file">
       <h3>{{ file.name }}</h3>
       <p>状态: {{ status }}</p>
-      
+
       <div v-if="status === 'uploading'">
         <progress :value="progress.percentage" max="100" />
         <p>{{ progress.percentage.toFixed(1) }}%</p>
@@ -82,16 +80,12 @@ const formatTime = (seconds: number): string => {
         <button @click="pause">暂停</button>
         <button @click="cancel">取消</button>
       </div>
-      
+
       <button v-if="status === 'paused'" @click="resume">恢复</button>
-      
-      <p v-if="status === 'error'" style="color: red">
-        错误: {{ error?.message }}
-      </p>
-      
-      <p v-if="status === 'success'" style="color: green">
-        上传完成！
-      </p>
+
+      <p v-if="status === 'error'" style="color: red">错误: {{ error?.message }}</p>
+
+      <p v-if="status === 'success'" style="color: green">上传完成！</p>
     </div>
   </div>
 </template>
@@ -115,17 +109,17 @@ const handleFilesChange = (e: Event) => {
 <template>
   <div>
     <input type="file" multiple @change="handleFilesChange" />
-    
+
     <div>
       <button @click="pauseAll">全部暂停</button>
       <button @click="resumeAll">全部恢复</button>
       <button @click="cancelAll">全部取消</button>
     </div>
-    
+
     <div>
-      <div 
-        v-for="task in tasks" 
-        :key="task.id" 
+      <div
+        v-for="task in tasks"
+        :key="task.id"
         style="border: 1px solid #ccc; padding: 10px; margin: 10px 0"
       >
         <h4>{{ task.file.name }}</h4>
@@ -145,18 +139,14 @@ const handleFilesChange = (e: Event) => {
 
 ```vue
 <script setup>
-import { UploadDropzone } from '@chunkflow/upload-component-vue';
-import { useUploadList } from '@chunkflow/upload-client-vue';
+import { UploadDropzone } from "@chunkflow/upload-component-vue";
+import { useUploadList } from "@chunkflow/upload-client-vue";
 
 const { uploadFiles } = useUploadList();
 </script>
 
 <template>
-  <UploadDropzone
-    accept="image/*,video/*"
-    :max-size="100 * 1024 * 1024"
-    @drop="uploadFiles"
-  >
+  <UploadDropzone accept="image/*,video/*" :max-size="100 * 1024 * 1024" @drop="uploadFiles">
     <div style="padding: 40px; text-align: center; border: 2px dashed #ccc">
       <p>拖放文件到这里</p>
       <p>或点击选择文件</p>

@@ -9,9 +9,9 @@ Comprehensive guide to handling errors in ChunkFlow.
 Network-related errors (timeout, offline, server error).
 
 ```typescript
-task.on('error', ({ error }) => {
-  if (error.code === 'NETWORK_ERROR') {
-    console.error('Network error:', error.message);
+task.on("error", ({ error }) => {
+  if (error.code === "NETWORK_ERROR") {
+    console.error("Network error:", error.message);
   }
 });
 ```
@@ -21,7 +21,7 @@ task.on('error', ({ error }) => {
 Token validation errors.
 
 ```typescript
-if (error.code === 'TOKEN_EXPIRED') {
+if (error.code === "TOKEN_EXPIRED") {
   // Refresh token and retry
 }
 ```
@@ -31,8 +31,8 @@ if (error.code === 'TOKEN_EXPIRED') {
 File validation errors.
 
 ```typescript
-if (error.code === 'FILE_TOO_LARGE') {
-  alert('File is too large');
+if (error.code === "FILE_TOO_LARGE") {
+  alert("File is too large");
 }
 ```
 
@@ -42,8 +42,8 @@ Automatic retry with exponential backoff:
 
 ```typescript
 const task = manager.createTask(file, {
-  retryCount: 3,     // Retry up to 3 times
-  retryDelay: 1000,  // 1 second base delay
+  retryCount: 3, // Retry up to 3 times
+  retryDelay: 1000, // 1 second base delay
 });
 ```
 
