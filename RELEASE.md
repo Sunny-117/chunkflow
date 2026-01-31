@@ -28,6 +28,7 @@ pnpm release
 - ✅ 已登录 npm：`npm login`
 - ✅ 有 GitHub 推送权限
 - ✅ 安装 GitHub CLI：`brew install gh && gh auth login`（推荐，用于自动创建 Release）
+- ✅ 确保 `packageManager` 字段在 package.json 中设置为 `pnpm@9.0.0`
 
 ### 正式发布流程
 
@@ -37,11 +38,13 @@ pnpm release
 2. ✅ 运行测试
 3. ✅ 类型检查
 4. ✅ 更新版本号（基于 changesets）
-5. ✅ 发布到 npm
+5. ✅ 发布到 npm（**pnpm 会自动将 `workspace:*` 转换为具体版本号**）
 6. ✅ 提交版本变更
 7. ✅ 创建 git tag
 8. ✅ 推送到 GitHub
 9. ✅ **自动创建 GitHub Release**（如果安装了 GitHub CLI）
+
+> **重要**：`changeset publish` 会使用 pnpm 发布，自动将 `workspace:*` 依赖转换为具体版本号（如 `0.0.1-alpha.1`）。
 
 ### Alpha 发布流程
 
@@ -127,6 +130,27 @@ gh release create v$VERSION --title "ChunkFlow v$VERSION" --prerelease --notes "
 ---
 
 ## 常见问题
+
+**Q: 发布的包中包含 `workspace:*` 依赖怎么办？**
+
+这是一个已知问题。解决方案：
+
+1. 发布新版本时，`changeset publish` 应该自动转换 `workspace:*` 为具体版本
+2. 如果没有自动转换，可以手动发布：
+
+```bash
+# 在每个包目录中
+cd packages/core
+pnpm publish --no-git-checks
+
+# 或者使用 npm
+npm publish
+```
+
+3. 确保 `.npmrc` 中有正确配置：
+```
+save-workspace-protocol=rolling
+```
 
 **Q: Alpha 版本如何安装？**
 

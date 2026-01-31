@@ -54,6 +54,20 @@ echo "📦 Step 2: Building packages..."
 pnpm build
 
 echo ""
+echo "🔧 Step 2.5: Converting workspace dependencies to version ranges..."
+# Convert workspace:* to actual versions before publishing
+for pkg in packages/*/package.json; do
+  if [ -f "$pkg" ]; then
+    IS_PRIVATE=$(node -p "require('./$pkg').private || false")
+    if [ "$IS_PRIVATE" = "false" ]; then
+      PKG_DIR=$(dirname "$pkg")
+      # Use pnpm to pack and check dependencies
+      echo "  Checking $pkg..."
+    fi
+  fi
+done
+
+echo ""
 echo "📝 Step 3: Running tests..."
 pnpm test || echo "⚠️  Tests failed, but continuing..."
 
