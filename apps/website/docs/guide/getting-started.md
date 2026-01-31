@@ -88,8 +88,8 @@ yarn add @chunkflowjs/upload-server
 
 ChunkFlow is organized into multiple packages:
 
-| Package                             | Description                                        |
-| ----------------------------------- | -------------------------------------------------- |
+| Package                               | Description                                        |
+| ------------------------------------- | -------------------------------------------------- |
 | `@chunkflowjs/protocol`               | TypeScript type definitions and interfaces         |
 | `@chunkflowjs/shared`                 | Common utilities (events, concurrency, file utils) |
 | `@chunkflowjs/core`                   | Core upload logic and state machine                |
