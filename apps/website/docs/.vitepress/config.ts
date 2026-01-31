@@ -59,6 +59,7 @@ export default defineConfig({
               text: "配置",
               items: [
                 { text: "客户端配置", link: "/zh/guide/client-config" },
+                { text: "请求适配器", link: "/zh/guide/request-adapters" },
                 { text: "服务端配置", link: "/zh/guide/server-config" },
                 { text: "存储适配器", link: "/zh/guide/storage-adapters" },
               ],
@@ -143,6 +144,7 @@ export default defineConfig({
           text: "Configuration",
           items: [
             { text: "Client Configuration", link: "/guide/client-config" },
+            { text: "Request Adapters", link: "/guide/request-adapters" },
             { text: "Server Configuration", link: "/guide/server-config" },
             { text: "Storage Adapters", link: "/guide/storage-adapters" },
           ],

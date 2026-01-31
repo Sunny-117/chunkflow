@@ -28,6 +28,8 @@ const task = manager.createTask(file, {
 
 ## Request Adapter
 
+### Fetch Adapter
+
 ```typescript
 const adapter = createFetchAdapter({
   baseURL: "http://localhost:3000/api",
@@ -35,11 +37,29 @@ const adapter = createFetchAdapter({
     Authorization: "Bearer token",
   },
   timeout: 30000,
+});
+```
+
+### XHR Adapter
+
+```typescript
+const adapter = createXHRAdapter({
+  baseURL: "http://localhost:3000/api",
+  headers: {
+    Authorization: "Bearer token",
+  },
+  timeout: 30000,
   withCredentials: true,
+  onUploadProgress: (event) => {
+    if (event.lengthComputable) {
+      console.log(`Progress: ${(event.loaded / event.total) * 100}%`);
+    }
+  },
 });
 ```
 
 ## See Also
 
+- [Request Adapters](/guide/request-adapters)
 - [Server Configuration](/guide/server-config)
 - [API Reference](/api/core)

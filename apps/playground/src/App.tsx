@@ -9,6 +9,7 @@ import InstantUploadDemo from "./demos/InstantUploadDemo";
 import SimpleTest from "./demos/SimpleTest";
 import HashPerformanceDemo from "./demos/HashPerformanceDemo";
 import FetchAdapterDemo from "./demos/FetchAdapterDemo";
+import XHRAdapterDemo from "./demos/XHRAdapterDemo";
 import "./App.css";
 
 const requestAdapter = new FetchRequestAdapter({
@@ -17,7 +18,15 @@ const requestAdapter = new FetchRequestAdapter({
 
 const SERVER_BASE_URL = "http://localhost:3001";
 
-type DemoTab = "simple" | "basic" | "multi" | "resume" | "instant" | "performance" | "adapter";
+type DemoTab =
+  | "simple"
+  | "basic"
+  | "multi"
+  | "resume"
+  | "instant"
+  | "performance"
+  | "adapter"
+  | "xhr";
 
 function App() {
   // Initialize from URL hash
@@ -31,6 +40,7 @@ function App() {
       "instant",
       "performance",
       "adapter",
+      "xhr",
     ];
     return validTabs.includes(hash as DemoTab) ? (hash as DemoTab) : "simple";
   };
@@ -77,6 +87,12 @@ function App() {
                 <span>🔌 Fetch Adapter</span>
               </button>
               <button
+                className={activeTab === "xhr" ? "active" : ""}
+                onClick={() => handleTabChange("xhr")}
+              >
+                <span>📡 XHR Adapter</span>
+              </button>
+              <button
                 className={activeTab === "basic" ? "active" : ""}
                 onClick={() => handleTabChange("basic")}
               >
@@ -113,6 +129,7 @@ function App() {
             <div className="demo-content">
               {activeTab === "simple" && <SimpleTest />}
               {activeTab === "adapter" && <FetchAdapterDemo />}
+              {activeTab === "xhr" && <XHRAdapterDemo />}
               {activeTab === "basic" && <BasicUploadDemo />}
               {activeTab === "multi" && <MultiFileUploadDemo />}
               {activeTab === "resume" && <ResumeUploadDemo />}
@@ -120,8 +137,8 @@ function App() {
               {activeTab === "performance" && <HashPerformanceDemo />}
             </div>
 
-            {/* Only show Upload Queue for upload demos, not for performance demo or adapter demo */}
-            {activeTab !== "performance" && activeTab !== "adapter" && (
+            {/* Only show Upload Queue for upload demos, not for performance demo or adapter demos */}
+            {activeTab !== "performance" && activeTab !== "adapter" && activeTab !== "xhr" && (
               <div className="upload-list-container">
                 <h3>Upload Queue</h3>
                 <UploadList baseURL={SERVER_BASE_URL} />
