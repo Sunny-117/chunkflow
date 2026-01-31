@@ -8,7 +8,7 @@
 # 1. 确保已登录 npm
 npm login
 
-# 2. 运行发布脚本（全自动）
+# 2. 运行发布脚本（全自动，支持断点续传）
 pnpm release
 ```
 
@@ -19,11 +19,12 @@ pnpm release
 - ✅ 创建 git tag 并推送
 - ✅ 创建 GitHub Release
 - ✅ 更新 dist-tags（稳定版本自动设置为 latest）
+- 🔄 **支持断点续传**：如果某一步失败，修复后重新运行脚本会从失败的步骤继续
 
 ### Alpha 版本发布
 
 ```bash
-# 指定 alpha 版本号（全自动）
+# 指定 alpha 版本号（全自动，支持断点续传）
 ./scripts/release-alpha.sh 0.0.1-alpha.4
 ```
 
@@ -36,10 +37,132 @@ pnpm release
 - ✅ 创建 GitHub Prerelease
 - ✅ 更新 alpha dist-tag
 - ❓ 询问是否更新 latest tag（仅在没有稳定版本时）
+- 🔄 **支持断点续传**：如果某一步失败，修复后重新运行脚本会从失败的步骤继续
+
+### 断点续传功能
+
+如果发布过程中某一步失败（如网络问题、npm 认证过期等）：
+
+1. **修复问题**（如重新登录 npm、检查网络）
+2. **重新运行相同的命令**
+3. 脚本会检测到之前的进度，询问是否继续：
+   ```
+   ⚠️  Found previous release in progress!
+   📊 Current release state:
+   
+     Version: 0.1.0
+   
+     Steps completed:
+       ✅ Build
+       ✅ Verify
+       ✅ Test
+       ✅ Typecheck
+       ✅ Version update
+       ✅ Rebuild
+       ⏸️  Publish  ← 从这里继续
+       ⏸️  Commit
+       ...
+   
+   Resume from last checkpoint? (y/n)
+   ```
+4. 选择 `y` 继续，或 `n` 重新开始
+
+**优势**：
+- 🚀 节省时间：不需要重新构建和测试
+- 🔒 安全：已完成的步骤会被跳过，避免重复操作
+- 💪 健壮：网络问题、npm 认证过期等都可以恢复
+- 📊 透明：清楚显示哪些步骤已完成
+
+---
+
+## 故障恢复
+
+### 常见失败场景及解决方案
+
+#### 1. npm 认证过期
+
+**症状**：发布时提示 `npm ERR! code ENEEDAUTH`
+
+**解决**：
+```bash
+# 重新登录
+npm login
+
+# 重新运行发布脚本（会从失败的步骤继续）
+pnpm release
+# 或
+./scripts/release-alpha.sh 0.0.1-alpha.4
+```
+
+#### 2. 网络问题
+
+**症状**：推送到 GitHub 失败或创建 Release 失败
+
+**解决**：
+```bash
+# 检查网络连接
+ping github.com
+
+# 重新运行脚本（会从失败的步骤继续）
+pnpm release
+```
+
+#### 3. 部分包发布失败
+
+**症状**：某些包发布成功，某些失败
+
+**解决**：
+```bash
+# 脚本会自动检测已发布的包并跳过
+# 直接重新运行即可
+pnpm release
+```
+
+#### 4. 测试失败
+
+**症状**：测试步骤失败
+
+**解决**：
+```bash
+# 修复测试问题
+# 然后重新运行（会从测试步骤继续）
+pnpm release
+```
+
+#### 5. 手动清理状态
+
+如果需要完全重新开始（不使用断点续传）：
+
+```bash
+# 删除状态文件
+rm -f .release-state
+
+# 重新运行发布脚本
+pnpm release
+```
+
+### 查看当前发布状态
+
+```bash
+# 查看发布进度
+source scripts/release-state.sh
+show_state
+```
 
 ---
 
 ## 自动化脚本说明
+
+### scripts/release-state.sh
+
+发布状态管理脚本，提供断点续传功能。
+
+**功能**：
+- 记录每个步骤的完成状态
+- 支持从失败的步骤恢复
+- 显示当前发布进度
+
+**状态文件**：`.release-state`（自动创建和清理）
 
 ### scripts/verify-publish.sh
 
