@@ -8,6 +8,7 @@ import ResumeUploadDemo from "./demos/ResumeUploadDemo";
 import InstantUploadDemo from "./demos/InstantUploadDemo";
 import SimpleTest from "./demos/SimpleTest";
 import HashPerformanceDemo from "./demos/HashPerformanceDemo";
+import FetchAdapterDemo from "./demos/FetchAdapterDemo";
 import "./App.css";
 
 const requestAdapter = new FetchRequestAdapter({
@@ -16,13 +17,21 @@ const requestAdapter = new FetchRequestAdapter({
 
 const SERVER_BASE_URL = "http://localhost:3001";
 
-type DemoTab = "simple" | "basic" | "multi" | "resume" | "instant" | "performance";
+type DemoTab = "simple" | "basic" | "multi" | "resume" | "instant" | "performance" | "adapter";
 
 function App() {
   // Initialize from URL hash
   const getTabFromHash = (): DemoTab => {
     const hash = window.location.hash.slice(1); // Remove #
-    const validTabs: DemoTab[] = ["simple", "basic", "multi", "resume", "instant", "performance"];
+    const validTabs: DemoTab[] = [
+      "simple",
+      "basic",
+      "multi",
+      "resume",
+      "instant",
+      "performance",
+      "adapter",
+    ];
     return validTabs.includes(hash as DemoTab) ? (hash as DemoTab) : "simple";
   };
 
@@ -62,6 +71,12 @@ function App() {
                 <span>Simple Test</span>
               </button>
               <button
+                className={activeTab === "adapter" ? "active" : ""}
+                onClick={() => handleTabChange("adapter")}
+              >
+                <span>🔌 Fetch Adapter</span>
+              </button>
+              <button
                 className={activeTab === "basic" ? "active" : ""}
                 onClick={() => handleTabChange("basic")}
               >
@@ -97,6 +112,7 @@ function App() {
           <main className="app-main">
             <div className="demo-content">
               {activeTab === "simple" && <SimpleTest />}
+              {activeTab === "adapter" && <FetchAdapterDemo />}
               {activeTab === "basic" && <BasicUploadDemo />}
               {activeTab === "multi" && <MultiFileUploadDemo />}
               {activeTab === "resume" && <ResumeUploadDemo />}
@@ -104,8 +120,8 @@ function App() {
               {activeTab === "performance" && <HashPerformanceDemo />}
             </div>
 
-            {/* Only show Upload Queue for upload demos, not for performance demo */}
-            {activeTab !== "performance" && (
+            {/* Only show Upload Queue for upload demos, not for performance demo or adapter demo */}
+            {activeTab !== "performance" && activeTab !== "adapter" && (
               <div className="upload-list-container">
                 <h3>Upload Queue</h3>
                 <UploadList baseURL={SERVER_BASE_URL} />

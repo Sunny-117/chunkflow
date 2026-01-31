@@ -5,3 +5,6 @@ export * from "./chunk-size-adjuster-tcp";
 export * from "./upload-task";
 export * from "./upload-manager";
 export * from "./plugins";
+
+// Built-in adapters
+export * from "./adapters";

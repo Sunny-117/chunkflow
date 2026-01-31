@@ -650,3 +650,140 @@ body::after {
   background: var(--orange);
   color: var(--darker-bg);
 }
+
+/* Fetch Adapter Demo Styles */
+.demo-config {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.demo-config h3 {
+  color: var(--orange);
+  margin-bottom: 16px;
+  font-size: 1.2rem;
+}
+
+.config-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.config-group label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.config-group input {
+  background: var(--gray);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.config-group input:focus {
+  outline: none;
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.code-example {
+  background: var(--darker-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  overflow-x: auto;
+}
+
+.code-example h4 {
+  color: var(--orange);
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.code-example pre {
+  margin: 0;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  overflow-x: auto;
+}
+
+.demo-actions {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.demo-features {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.demo-features h3 {
+  color: var(--orange);
+  margin-bottom: 16px;
+  font-size: 1.2rem;
+}
+
+.demo-features ul {
+  list-style: none;
+  padding: 0;
+}
+
+.demo-features li {
+  padding: 8px 0;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.demo-notes {
+  background: rgba(255, 107, 53, 0.05);
+  border: 1px solid rgba(255, 107, 53, 0.2);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.demo-notes h3 {
+  color: var(--orange);
+  margin-bottom: 16px;
+  font-size: 1.2rem;
+}
+
+.demo-notes ul {
+  color: var(--text);
+  padding-left: 20px;
+}
+
+.demo-notes li {
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.demo-notes code {
+  background: var(--darker-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: 13px;
+  color: var(--orange-light);
+}
