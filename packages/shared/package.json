@@ -1,6 +1,6 @@
 {
   "name": "@chunkflowjs/shared",
-  "version": "0.0.1-alpha.3",
+  "version": "0.0.1-alpha.4",
   "description": "Shared utilities and tools for ChunkFlow Upload SDK",
   "keywords": [
     "shared",

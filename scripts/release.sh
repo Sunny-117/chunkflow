@@ -35,6 +35,11 @@ echo "📦 Step 1: Building packages..."
 pnpm build
 
 echo ""
+echo "🔍 Step 1.5: Verifying packages before release..."
+chmod +x scripts/verify-publish.sh
+./scripts/verify-publish.sh
+
+echo ""
 echo "📝 Step 2: Running tests..."
 pnpm test
 
@@ -111,5 +116,16 @@ fi
 
 echo ""
 echo "✅ Release complete!"
+echo ""
+echo "🏷️  Step 11: Updating dist-tags..."
+# Automatically update latest tag for stable releases
+if [[ ! "$VERSION" =~ (alpha|beta|rc) ]]; then
+  echo "Updating 'latest' tag for stable release v$VERSION..."
+  chmod +x scripts/update-dist-tags.sh
+  ./scripts/update-dist-tags.sh "$VERSION" latest
+else
+  echo "Skipping 'latest' tag update for pre-release version"
+fi
+
 echo ""
 echo "🎉 Version $VERSION has been published to npm and GitHub!"

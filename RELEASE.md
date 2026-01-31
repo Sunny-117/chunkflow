@@ -8,16 +8,63 @@
 # 1. 确保已登录 npm
 npm login
 
-# 2. 运行发布脚本（会自动创建 GitHub Release）
+# 2. 运行发布脚本（全自动）
 pnpm release
 ```
+
+脚本会自动：
+- ✅ 验证包配置（检查 workspace:* 依赖）
+- ✅ 构建、测试、类型检查
+- ✅ 更新版本号并发布到 npm
+- ✅ 创建 git tag 并推送
+- ✅ 创建 GitHub Release
+- ✅ 更新 dist-tags（稳定版本自动设置为 latest）
 
 ### Alpha 版本发布
 
 ```bash
-# 指定 alpha 版本号（会自动创建 GitHub Prerelease）
-./scripts/release-alpha.sh 0.0.1-alpha.1
+# 指定 alpha 版本号（全自动）
+./scripts/release-alpha.sh 0.0.1-alpha.4
 ```
+
+脚本会自动：
+- ✅ 更新所有包版本号
+- ✅ 验证包配置
+- ✅ 构建、测试、类型检查
+- ✅ 发布到 npm 的 alpha tag
+- ✅ 创建 git tag 并推送
+- ✅ 创建 GitHub Prerelease
+- ✅ 更新 alpha dist-tag
+- ❓ 询问是否更新 latest tag（仅在没有稳定版本时）
+
+---
+
+## 自动化脚本说明
+
+### scripts/verify-publish.sh
+
+发布前验证脚本，检查：
+- 是否存在 `workspace:*` 依赖（会在发布时自动转换）
+- 包配置是否正确
+
+**使用**：在 `release.sh` 和 `release-alpha.sh` 中自动调用
+
+### scripts/update-dist-tags.sh
+
+批量更新 npm dist-tags 的脚本。
+
+**使用**：
+```bash
+# 自动调用（在发布脚本中）
+./scripts/update-dist-tags.sh 0.1.0 latest
+
+# 手动调用
+./scripts/update-dist-tags.sh <version> <tag>
+```
+
+**参数**：
+- `version`: 要设置的版本号（如 `0.1.0`）
+- `tag`: dist-tag 名称（如 `latest`, `alpha`, `beta`）
 
 ---
 
@@ -44,7 +91,10 @@ pnpm release
 8. ✅ 推送到 GitHub
 9. ✅ **自动创建 GitHub Release**（如果安装了 GitHub CLI）
 
-> **重要**：`changeset publish` 会使用 pnpm 发布，自动将 `workspace:*` 依赖转换为具体版本号（如 `0.0.1-alpha.1`）。
+> **重要**：
+> - `changeset publish` 会使用 pnpm 发布，自动将 `workspace:*` 依赖转换为具体版本号（如 `0.0.1-alpha.1`）
+> - 正式版本会自动设置为 `latest` tag
+> - 第一个正式版本发布后，`latest` 将指向稳定版本
 
 ### Alpha 发布流程
 
@@ -55,6 +105,11 @@ pnpm release
 3. ✅ 发布到 npm 的 `alpha` tag
 4. ✅ 提交、打 tag、推送到 GitHub
 5. ✅ **自动创建 GitHub Prerelease**（如果安装了 GitHub CLI）
+
+> **注意**：
+> - Alpha 版本使用 `--tag alpha` 发布，不会影响 `latest` tag
+> - 在第一个稳定版本发布之前，`latest` 会指向最新的 alpha 版本
+> - 用户需要明确指定 `@alpha` 来安装 alpha 版本：`npm install @chunkflowjs/core@alpha`
 
 ### 验证发布
 
@@ -68,6 +123,26 @@ npm view @chunkflowjs/core@alpha
 # 查看所有 dist-tags
 npm view @chunkflowjs/core dist-tags
 ```
+
+### 管理 dist-tags
+
+```bash
+# 查看当前 tags
+npm dist-tag ls @chunkflowjs/core
+
+# 添加或更新 tag
+npm dist-tag add @chunkflowjs/core@0.1.0 latest
+
+# 删除 tag（不推荐删除 latest）
+npm dist-tag rm @chunkflowjs/core beta
+
+# 批量更新所有包的 latest tag
+for pkg in core protocol shared upload-client-react upload-client-vue upload-component-react upload-component-vue upload-server; do
+  npm dist-tag add @chunkflowjs/$pkg@0.1.0 latest
+done
+```
+
+> **当前状态**：在第一个稳定版本（如 `0.1.0`）发布之前，`latest` 指向最新的 alpha 版本。
 
 ---
 

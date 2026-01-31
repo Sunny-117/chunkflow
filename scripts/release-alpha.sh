@@ -54,18 +54,9 @@ echo "📦 Step 2: Building packages..."
 pnpm build
 
 echo ""
-echo "🔧 Step 2.5: Converting workspace dependencies to version ranges..."
-# Convert workspace:* to actual versions before publishing
-for pkg in packages/*/package.json; do
-  if [ -f "$pkg" ]; then
-    IS_PRIVATE=$(node -p "require('./$pkg').private || false")
-    if [ "$IS_PRIVATE" = "false" ]; then
-      PKG_DIR=$(dirname "$pkg")
-      # Use pnpm to pack and check dependencies
-      echo "  Checking $pkg..."
-    fi
-  fi
-done
+echo "🔍 Step 2.5: Verifying packages before publishing..."
+chmod +x scripts/verify-publish.sh
+./scripts/verify-publish.sh
 
 echo ""
 echo "📝 Step 3: Running tests..."
@@ -88,7 +79,7 @@ for pkg in packages/*/package.json; do
       PKG_DIR=$(dirname "$pkg")
       PKG_NAME=$(node -p "require('./$pkg').name")
       echo "  Publishing $PKG_NAME..."
-      (cd "$PKG_DIR" && npm publish --tag alpha --access public)
+      (cd "$PKG_DIR" && pnpm publish --tag alpha --access public --no-git-checks)
     fi
   fi
 done
@@ -116,9 +107,31 @@ if command -v gh &> /dev/null; then
   
   gh release create "v$TARGET_VERSION" \
     --title "ChunkFlow v$TARGET_VERSION" \
-    --notes "Alpha release - for testing purposes only" \
-    --prerelease \
-    --verify-tag
+    --notes "🧪 Alpha release - for testing purposes only
+
+## Installation
+
+\`\`\`bash
+npm install @chunkflowjs/core@alpha
+# or
+npm install @chunkflowjs/core@$TARGET_VERSION
+\`\`\`
+
+## ⚠️ Warning
+
+This is an alpha release and may contain bugs. API may change in future releases.
+
+## 📦 Packages
+
+- @chunkflowjs/core@$TARGET_VERSION
+- @chunkflowjs/protocol@$TARGET_VERSION
+- @chunkflowjs/shared@$TARGET_VERSION
+- @chunkflowjs/upload-client-react@$TARGET_VERSION
+- @chunkflowjs/upload-client-vue@$TARGET_VERSION
+- @chunkflowjs/upload-component-react@$TARGET_VERSION
+- @chunkflowjs/upload-component-vue@$TARGET_VERSION
+- @chunkflowjs/upload-server@$TARGET_VERSION" \
+    --prerelease
   
   echo "✅ GitHub Prerelease created successfully!"
 else
@@ -135,6 +148,25 @@ else
 fi
 
 echo ""
+echo "🏷️  Step 10: Updating dist-tags..."
+# Update alpha tag
+chmod +x scripts/update-dist-tags.sh
+./scripts/update-dist-tags.sh "$TARGET_VERSION" alpha
+
+# Also update latest tag if no stable version exists
+echo ""
+echo "Update 'latest' tag to point to this alpha version?"
+echo "(Only do this if there's no stable release yet)"
+read -p "Update latest tag? (y/n) " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+  ./scripts/update-dist-tags.sh "$TARGET_VERSION" latest
+  echo "✅ Updated 'latest' tag"
+else
+  echo "⏭️  Skipped 'latest' tag update"
+fi
+
+echo ""
 echo "✅ Alpha release complete!"
 echo ""
 echo "🎉 Version $TARGET_VERSION has been published!"
@@ -142,3 +174,7 @@ echo ""
 echo "📦 Verify on npm:"
 echo "  npm view @chunkflowjs/core dist-tags"
 echo "  npm view @chunkflowjs/core@alpha"
+echo ""
+echo "📥 Install with:"
+echo "  npm install @chunkflowjs/core@alpha"
+echo "  npm install @chunkflowjs/core@$TARGET_VERSION"
